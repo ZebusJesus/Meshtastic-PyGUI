@@ -1,0 +1,8 @@
+meshtastic --setlat 1 
+meshtastic --setlon 1 
+meshtastic --setalt 1 
+meshtastic --setrouter 
+meshtastic --unset-router 
+C:/Users/rsmed/Documents/info.text 
+python device-install.sh -f C:/Users/rsmed/Documents/info.text 
+sh sdevice-install.sh -f C:/Users/rsmed/Documents/info.text 

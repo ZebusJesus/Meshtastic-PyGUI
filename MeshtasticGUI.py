@@ -14,7 +14,7 @@ import os
 
 sg.theme('DarkAmber')   # Add a touch of color
 # All the stuff inside your window.
-layout = [  [sg.Text('Welcome to the Meshtastic Python GUI!!')],
+layout = [  [sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
             [sg.Button('Radio Information'), sg.Button('Help'), sg.Button('QR')],
             [sg.Text('Make sure to enclose message in " ", this allows for spaces in messages')],
             [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
@@ -24,45 +24,53 @@ layout = [  [sg.Text('Welcome to the Meshtastic Python GUI!!')],
             [sg.Button('Set URL'), sg.InputText(key='-URLINPUT-')],
             [sg.Button('Set Owner'), sg.InputText(key='-OWNERINPUT-')],
             [sg.Button('Set Lattitude'),sg.InputText(size=(10,1),key='-SETLAT-'), sg.Button('Set Longitude'), sg.InputText(size=(10,1),key='-SETLON-'),
-                sg.Button('Set Altitude'), sg.InputText(size=(10,1),key='-SETALT-')]
+                sg.Button('Set Altitude'), sg.InputText(size=(10,1),key='-SETALT-')],
+            [sg.Button('Set Router'), sg.Button('Unset Router')],
+            [sg.Text('In order to use the flash tool your environmental variables must be configured')],
+            [sg.Text('Python, Git for Windows, and esptools must be installed and configured')],
+            [sg.Text('If you have installed Visual Studio with Python Support your path will not be standard and will be located where you installed visual studio')],
+            [sg.Input(key='_FILES_'), sg.FilesBrowse()],
+            [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Cancel()]
+
         ]
 # Create the Window
 window = sg.Window('Meshtatstic-PyGUI', layout)
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
-    process_event(event, values)
-def process_event(event, values):
     if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
         window.close()
+        break
     if event == 'Radio Information': #if user clicks Radio Information
-        os.system("meshtastic --info >info.text && pause") # outout radio information to txt file
-        break
+
+        os.system("meshtastic --info") # outout radio information to txt file
     if event == 'Help':
-        os.system("meshtastic -h  && pause")
-        break
+        os.system("meshtastic -h")
     if event == 'QR':
         os.system("meshtastic --qr >QR.png")
-        break
     if event == 'Send Message': #if user clicks send message take input and send to radio
         os.system("meshtastic --sendtext "+ values['-MSGINPUT-'])
-        break
     if event == 'Set Channel':
-        os.system("echo meshtastic --setchan spread_factor "+values['-SFINPUT-']+" --setchan coding_rate "+values['-CRINPUT-']+" --setchan bandwidth "+values['-BWINPUT-']+" > testchanset.txt")
-        break
+        os.system("echo meshtastic --setchan spread_factor "+values['-SFINPUT-']+" --setchan coding_rate "+values['-CRINPUT-']+" --setchan bandwidth "+values['-BWINPUT-']+" >>log.txt")
     if event == 'Set URL':
-        os.system("echo meshtatic --seturl "+values['-URLINPUT-']+" >seturl.txt")
-        break
+        os.system("meshtatic --seturl "+values['-URLINPUT-'])
+    if event == 'Set Long Slow':
+        os.system("meshtastic --setch-longslow")
+    if event == 'Set Short Fast':
+        os.system("meshtastic --setch-shortfast")
     if event == 'Set Owner':
-        os.system("echo meshtastic --setowner "+values['-OWNERINPUT-']+" >setowner.txt")
-        break
+        os.system("meshtastic --setowner "+values['-OWNERINPUT-'])
     if event == 'Set Lattitude':
-        os.system("echo meshtastic --setlat "+values['-SETLAT-']+" >setlat.txt")
-        break
+        os.system("meshtastic --setlat "+values['-SETLAT-'])
     if event == 'Set Longitude':
-        os.system("echo meshtastic --setlon "+values['-SETLON-']+" >setlon.txt")
-        break
+        os.system("meshtastic --setlon "+values['-SETLON-'])
     if event == 'Set Altitude':
-        os.system("echo meshtastic --setalt "+values['-SETALT-']+" >setalt.txt")
-        break
-    window.close()
+        os.system("meshtastic --setalt "+values['-SETALT-'])
+    if event == 'Set Router':
+        os.system("echo meshtastic --setrouter")
+    if event == 'Unset Router':
+        os.system("echo meshtastic --unset-router")
+    if event == "Flash Firmware": # this command requires .sh files be able to be handled by the system, windows can us
+        os.system("sh device-install.sh -f "+values['_FILES_'])
+    if event == "Update Firmware":# update firmware while keeping settings in place
+        os.system("sh device-update.sh -f "+values['_FILES_'])
