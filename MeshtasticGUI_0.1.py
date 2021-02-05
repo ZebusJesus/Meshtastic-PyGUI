@@ -43,7 +43,7 @@ while True:
         break
     if event == 'Radio Information': #if user clicks Radio Information
 
-        os.system("meshtastic --info") # outout radio information to txt file
+        os.system("meshtastic --info >radioinfo.txt") # outout radio information to txt file
     if event == 'Help':
         os.system("meshtastic -h")
     if event == 'QR':
