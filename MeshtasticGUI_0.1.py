@@ -10,6 +10,9 @@
 
 import PySimpleGUI as sg
 import os
+import meshtastic
+from pubsub import pub
+
 
 
 sg.theme('DarkAmber')   # Add a touch of color
@@ -33,6 +36,19 @@ layout = [  [sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT R
             [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Cancel()]
 
         ]
+## I think this opens connection to the radio
+def onReceive(packet, interface): # called when a packet arrives
+    print(f"Received: {packet}")
+
+def onConnection(interface, topic=pub.AUTO_TOPIC): # called when we (re)connect to the radio
+    # defaults to broadcast, specify a destination ID if you wish
+    interface.sendText("hello mesh")
+
+
+#pub.subscribe(onReceive, "meshtastic.receive")
+#pub.subscribe(onConnection, "meshtastic.connection.established")
+# By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
+interface = meshtastic.SerialInterface()
 # Create the Window
 window = sg.Window('Meshtatstic-PyGUI', layout)
 # Event Loop to process "events" and get the "values" of the inputs
