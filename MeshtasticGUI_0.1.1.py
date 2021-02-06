@@ -45,10 +45,13 @@ def make_win2VERSION():
                [sg.Checkbox('Stable'), sg.Checkbox('Beta'), sg.Checkbox('Alpha'), sg.Checkbox('Hamster Nightly')],
                [sg.Button('Download Firmware')],
                [sg.Input(key='_FILES_'), sg.FilesBrowse()],
+               [sg.Text('Firmware festure not complete, the download just downloads the 1.33 binary to a test.zip')],
+               [sg.Text('If you extract that folder you will find the binareies you need and you can browse to the')],
+               [sg.Text('needed one using the browse button and then use the flash or update buttons.')],
                [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Cancel()],
                [sg.Button('Exit')]
               ]
-    return sg.Window('Window Title', layout, finalize=True)
+    return sg.Window('Firmware Utility', layout, finalize=True)
 
 def make_win3():
     layout = [[sg.Text('Window 3')],
@@ -57,7 +60,7 @@ def make_win3():
               [sg.Text(size=(25,1), key='-OUTPUT-')],
               [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
               [sg.Button('Connect to Radio'), sg.Button('Exit')]]
-    return sg.Window('Window Title', layout, finalize=True)
+    return sg.Window('Radio I/O', layout, finalize=True)
 
 
 def main():
