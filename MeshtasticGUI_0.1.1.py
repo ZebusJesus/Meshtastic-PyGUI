@@ -17,11 +17,7 @@ from pubsub import pub
 
 def make_win1API():
     sg.theme('DarkAmber')
-    layout = [[sg.Text('Window 1')],
-              [sg.Text('Enter something to output to Window 2')],
-              [sg.Input(key='-IN-', enable_events=True)],
-              [sg.Text(size=(25,1), key='-OUTPUT-')],
-              [sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
+    layout = [[sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
               [sg.Button('Radio Information'), sg.Button('Help'), sg.Button('QR')],
               [sg.Text('Make sure to enclose message in " ", this allows for spaces in messages')],
               [sg.Button('Set Channel Settings'), sg.Text('SF'), sg.InputText(size=(10,1),key='-SFINPUT-'), sg.Text('CR'), sg.InputText(size=(10,1),key='-CRINPUT-'),
@@ -117,11 +113,14 @@ def main():
             # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
             interface = meshtastic.SerialInterface()
 
+        elif event == 'Radio Information': #if user clicks Radio Information
+            os.system("meshtastic --info >radioinfo.txt") # outout radio information to txt file
+
         elif event == 'Send Message': #if user clicks send message take input and send to radio
             os.system("meshtastic --sendtext "+ values['-MSGINPUT-'])
 
         elif event == 'Help':
-            os.system("meshtastic -h")
+            os.system("meshtastic -h && pause")
 
         elif event == 'QR':
             try:
@@ -130,10 +129,15 @@ def main():
                 print('error')
 
         elif event == 'Set Channel':
-            os.system("echo meshtastic --setchan spread_factor "+values['-SFINPUT-']+" --setchan coding_rate "+values['-CRINPUT-']+" --setchan bandwidth "+values['-BWINPUT-']+" >>log.txt")
-
+            try:
+                os.system("meshtastic --setchan spread_factor "+values['-SFINPUT-']+" --setchan coding_rate "+values['-CRINPUT-']+" --setchan bandwidth "+values['-BWINPUT-'])
+            except:
+                os.system("echo ERROR Set Channel Event >>error.log")
         elif event == 'Set URL':
-            os.system("meshtatic --seturl "+values['-URLINPUT-'])
+            try:
+                os.system("meshtatic --seturl "+values['-URLINPUT-'])
+            except:
+                os.system("echo ERROR Set URL error >>error.log")
 
         elif event == 'Set Long Slow':
             os.system("meshtastic --setch-longslow")
@@ -160,7 +164,7 @@ def main():
             os.system("echo meshtastic --unset-router")
 
         elif event == 'Download Firmware':
-            firmwareID = '1'
+            firmwareID = 'NULL'
             try:
                 if event == values['-T-Beam-'] == True:
                     firmwareID = '-tbeam'
@@ -175,6 +179,16 @@ def main():
                 open('test.zip', 'wb').write(firmwarefile.content)
             except:
                 print('error')
+        elif event == "Flash Firmware": # this command requires .sh files be able to be handled by the system, windows can us
+            try:
+                os.system("sh device-install.sh -f "+values['_FILES_'])
+            except:
+                os.system("echo ERROR Flash Firmware Event >>error.log")
+        elif event == "Update Firmware":# update firmware while keeping settings in place
+            try:
+                os.system("sh device-update.sh -f "+values['_FILES_'])
+            except:
+                os.system("echo ERROR Firmware update Event >>error.log")
 
 
 
