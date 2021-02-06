@@ -1,0 +1,27 @@
+Connected to radio
+my_node_num: 84749816
+has_gps: true
+num_channels: 13
+region: "1.0-US"
+hw_model: "tbeam"
+firmware_version: "1.1.33"
+packet_id_bits: 32
+current_packet_id: 1633479857
+node_num_bits: 32
+message_timeout_msec: 300000
+min_app_version: 20120
+
+preferences {
+  ls_secs: 300
+  region: US
+}
+channel_settings {
+  modem_config: Bw125Cr48Sf4096
+  psk: "\001"
+}
+
+Channel URL https://www.meshtastic.org/c/#GAMiAQE=
+Nodes in mesh:
+{'num': 84749816, 'user': {'id': '!3c61050d2df8', 'longName': 'Unknown 2df8', 'shortName': '?F8', 'macaddr': 'PGEFDS34'}, 'position': {'altitude': 123, 'batteryLevel': 100, 'latitudeI': 475057608, 'longitudeI': -1217684191, 'time': 1612590657, 'latitude': 47.5057608, 'longitude': -121.76841909999999}}
+{'num': 84749804, 'user': {'id': '!3c61050d2dec', 'longName': 'Unknown 2dec', 'shortName': '?EC', 'macaddr': 'PGEFDS3s'}, 'position': {'altitude': 131, 'batteryLevel': 100, 'latitudeI': 475057248, 'longitudeI': -1217682773, 'time': 1612589937, 'latitude': 47.505724799999996, 'longitude': -121.7682773}, 'snr': 9.5}
+{'num': 84752240, 'user': {'id': '!3c61050d3770', 'longName': 'Unknown 3770', 'shortName': '?70', 'macaddr': 'PGEFDTdw'}, 'position': {'altitude': 111, 'batteryLevel': 93, 'latitudeI': 475057417, 'longitudeI': -1217683459, 'time': 1612590097, 'latitude': 47.505741699999994, 'longitude': -121.7683459}, 'snr': 10.75}
