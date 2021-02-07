@@ -105,22 +105,22 @@ def main():
         elif event == 'Connect to Radio':
             output_window = window3
             def onReceive(packet, interface): # called when a packet arrives
-                print(f"Received: {packet}")
+                print(f'Received: {packet}')
 
             def onConnection(interface, topic=pub.AUTO_TOPIC): # called when we (re)connect to the radio
                 # defaults to broadcast, specify a destination ID if you wish
-                interface.sendText("hello mesh")
+                interface.sendText('hello mesh')
 
-            pub.subscribe(onReceive, "meshtastic.receive")
-            pub.subscribe(onConnection, "meshtastic.connection.established")
+            pub.subscribe(onReceive, 'meshtastic.receive')
+            pub.subscribe(onConnection, 'meshtastic.connection.established')
             # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
             interface = meshtastic.SerialInterface()
 
         elif event == 'Radio Information': #if user clicks Radio Information
-            os.system("meshtastic --info >radioinfo.txt") # outout radio information to txt file
+            os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
 
         elif event == 'Send Message': #if user clicks send message take input and send to radio
-            os.system("meshtastic --sendtext "+ values['-MSGINPUT-'])
+            os.system('meshtastic --sendtext '+ values['-MSGINPUT-'])
 
         elif event == 'Help':
             os.system("meshtastic -h && pause")
@@ -133,38 +133,38 @@ def main():
 
         elif event == 'Set Channel':
             try:
-                os.system("meshtastic --setchan spread_factor "+values['-SFINPUT-']+" --setchan coding_rate "+values['-CRINPUT-']+" --setchan bandwidth "+values['-BWINPUT-'])
+                os.system('meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
             except:
-                os.system("echo ERROR Set Channel Event >>error.log")
+                os.system('echo ERROR Set Channel Event >>error.log')
         elif event == 'Set URL':
             try:
-                os.system("meshtatic --seturl "+values['-URLINPUT-'])
+                os.system('meshtatic --seturl '+values['-URLINPUT-'])
             except:
-                os.system("echo ERROR Set URL error >>error.log")
+                os.system('echo ERROR Set URL error >>error.log')
 
         elif event == 'Set Long Slow':
-            os.system("meshtastic --setch-longslow")
+            os.system('meshtastic --setch-longslow')
 
         elif event == 'Set Short Fast':
-            os.system("meshtastic --setch-shortfast")
+            os.system('meshtastic --setch-shortfast')
 
         elif event == 'Set Owner':
-            os.system("meshtastic --setowner "+values['-OWNERINPUT-'])
+            os.system('meshtastic --setowner '+values['-OWNERINPUT-'])
 
         elif event == 'Set Lattitude':
-            os.system("meshtastic --setlat "+values['-SETLAT-'])
+            os.system('meshtastic --setlat '+values['-SETLAT-'])
 
         elif event == 'Set Longitude':
-            os.system("meshtastic --setlon "+values['-SETLON-'])
+            os.system('meshtastic --setlon '+values['-SETLON-'])
 
         elif event == 'Set Altitude':
-            os.system("meshtastic --setalt "+values['-SETALT-'])
+            os.system('meshtastic --setalt '+values['-SETALT-'])
 
         elif event == 'Set Router':
-            os.system("echo meshtastic --setrouter")
+            os.system('echo meshtastic --setrouter')
 
         elif event == 'Unset Router':
-            os.system("echo meshtastic --unset-router")
+            os.system('echo meshtastic --unset-router')
 
         elif event == 'Download Firmware':
             firmwareID = 'NULL'
@@ -172,26 +172,26 @@ def main():
                 if event == values['-T-Beam-'] == True:
                     firmwareID = '-tbeam'
                 elif event == values['-heltec-'] == True:
-                    firmwareID = "-heltec"
+                    firmwareID = '-heltec'
                 elif event == values['-T-LoRa-'] == True:
-                    firmwareID = "-tlora"
+                    firmwareID = '-tlora'
                 elif event == values['-LoRa Relay-'] == True:
-                    firmwareID = "-lora-relay"
+                    firmwareID = '-lora-relay'
                 url = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.33/firmware-1.1.33.zip'
                 firmwarefile = requests.get(url)
                 open('test.zip', 'wb').write(firmwarefile.content)
             except:
                 print('error')
-        elif event == "Flash Firmware": # this command requires .sh files be able to be handled by the system, windows can us
+        elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
             try:
-                os.system("sh device-install.sh -f "+values['_FILES_'])
+                os.system('sh device-install.sh -f '+values['_FILES_'])
             except:
-                os.system("echo ERROR Flash Firmware Event >>error.log")
-        elif event == "Update Firmware":# update firmware while keeping settings in place
+                os.system('echo ERROR Flash Firmware Event >>error.log')
+        elif event == 'Update Firmware':# update firmware while keeping settings in place
             try:
-                os.system("sh device-update.sh -f "+values['_FILES_'])
+                os.system('sh device-update.sh -f '+values['_FILES_'])
             except:
-                os.system("echo ERROR Firmware update Event >>error.log")
+                os.system('echo ERROR Firmware update Event >>error.log')
 
 
 
