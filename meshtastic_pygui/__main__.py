@@ -4,7 +4,11 @@ import requests
 import meshtastic
 import subprocess
 from pubsub import pub
+
+
+
 """
+
 
     All windows are immediately visible.  Each window updates the other.
 
@@ -56,13 +60,12 @@ def make_win3():
               #[sg.Text('Enter something to output to Window 1')],
               #[sg.Input(key='-IN-', enable_events=True)],
               #[sg.Text(size=(25,1), key='-OUTPUT-')],
-              [sg.Output(size=(20,20))],
+              [sg.Output(size=(20,20),key='-OUTPUT_RADIO-')],
               [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
               [sg.Button('Connect to Radio'), sg.Button('Exit'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True)
 
-def radio_close():
-    interface_close=meshtastic.SerialInterface()
+interface = meshtastic.SerialInterface()
 
 
 def main():
@@ -71,6 +74,8 @@ def main():
     window2.move(window1API.current_location()[0], window1API.current_location()[1]+220)
 
     window3.move(window1API.current_location()[0], window1API.current_location()[1]+220)
+
+
 
     while True:             # Event Loop
         window, event, values = sg.read_all_windows()
@@ -103,7 +108,7 @@ def main():
                 window3.move(window1API.current_location()[0], window1API.current_location()[1] - 220)
 
         elif event == '-IN-':
-            output_window = window3 if window == window1API else window1API
+            output_window = window3
             if output_window:           # if a valid window, then output to it
                 output_window['-OUTPUT-'].update(values['-IN-'])
             else:
@@ -111,6 +116,7 @@ def main():
 
         elif event == 'Connect to Radio':
             output_window = window3
+            interface = meshtastic.SerialInterface()
             def onReceive(packet, interface): # called when a packet arrives
                 print(f"Received: {packet}")
 
@@ -118,10 +124,9 @@ def main():
                 # defaults to broadcast, specify a destination ID if you wish
                 interface.sendText("hello mesh")
 
-            pub.subscribe(onReceive, "meshtastic.receive")
-            pub.subscribe(onConnection, "meshtastic.connection.established")
+            print(pub.subscribe(onReceive, "meshtastic.receive"))
+            print(pub.subscribe(onConnection, "meshtastic.connection.established"))
             # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
-            interface = meshtastic.SerialInterface()
 
 
         elif event == 'Radio Information': #if user clicks Radio Information
