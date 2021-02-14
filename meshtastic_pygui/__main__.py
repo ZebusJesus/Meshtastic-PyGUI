@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import os
 import requests
 import meshtastic
+import subprocess
 from pubsub import pub
 """
 
@@ -36,9 +37,6 @@ def make_win1API():
 
 def make_win2VERSION():
     layout = [[sg.Text('Hardware and  Firmware build selection')],
-              #[sg.Text('Enter something to output to Window 1')],
-              #[sg.Input(key='-IN-', enable_events=True)],
-              #[sg.Text(size=(25,1), key='-OUTPUT-')],
                [sg.Checkbox('T-Beam',key='-T-Beam-'),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
                [sg.Checkbox('ANZ'),sg.Checkbox('CN'),sg.Checkbox('EU865'),sg.Checkbox('EU443'),sg.Checkbox('JP'),sg.Checkbox('KR'),sg.Checkbox('US')],
@@ -55,12 +53,16 @@ def make_win2VERSION():
 
 def make_win3():
     layout = [[sg.Text('Window 3')],
-              [sg.Text('Enter something to output to Window 1')],
-              [sg.Input(key='-IN-', enable_events=True)],
-              [sg.Text(size=(25,1), key='-OUTPUT-')],
+              #[sg.Text('Enter something to output to Window 1')],
+              #[sg.Input(key='-IN-', enable_events=True)],
+              #[sg.Text(size=(25,1), key='-OUTPUT-')],
+              [sg.Output(size=(20,20))],
               [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
-              [sg.Button('Connect to Radio'), sg.Button('Exit')]]
+              [sg.Button('Connect to Radio'), sg.Button('Exit'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True)
+
+def radio_close():
+    interface_close=meshtastic.SerialInterface()
 
 
 def main():
@@ -84,6 +86,11 @@ def main():
                 window1API = None
             elif window == window3:
                 window3 = None
+
+        elif event == 'Close Radio Connection':
+            output_window = window3
+
+            #meshtastic.SreamInterface.close()
 
         elif event == 'Reopen2':
             if not window2:
@@ -115,6 +122,7 @@ def main():
             pub.subscribe(onConnection, "meshtastic.connection.established")
             # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
             interface = meshtastic.SerialInterface()
+
 
         elif event == 'Radio Information': #if user clicks Radio Information
             os.system("meshtastic --info >radioinfo.txt") # outout radio information to txt file
