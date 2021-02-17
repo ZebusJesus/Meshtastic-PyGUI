@@ -18,7 +18,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/ZebusJesus/Meshtastic-PyGUI",
     author="Zebus Jeus",
-    author_email="ZebusJeus@something.com",
+    author_email="ZebusJeus@pm.me",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",

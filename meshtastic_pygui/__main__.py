@@ -65,8 +65,10 @@ def make_win3():
               [sg.Button('Connect to Radio'), sg.Button('Exit'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True)
 
-interface = meshtastic.SerialInterface()
-
+try:
+    interface = meshtastic.SerialInterface()
+except:
+    print('No Radio Connected')
 
 def main():
     window1API, window2, window3 = make_win1API(), make_win2VERSION(), make_win3()
@@ -94,6 +96,7 @@ def main():
 
         elif event == 'Close Radio Connection':
             output_window = window3
+            os.system("devcon.exe hwids * >>hwid.txt")
 
             #meshtastic.SreamInterface.close()
 
