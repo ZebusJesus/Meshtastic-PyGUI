@@ -138,8 +138,8 @@ def main():
         elif event == 'Send Message': #if user clicks send message take input and send to radio
             os.system("meshtastic --sendtext "+ values['-MSGINPUT-'])
 
-        elif event == 'Help':
-            os.system("meshtastic -h && pause")
+        elif event == 'Help': #if user clicks the help button
+            os.system("meshtastic -h && pause") #output meshtastic help via cmd prompt
 
         elif event == 'QR':
             try:
@@ -159,7 +159,10 @@ def main():
                 os.system("echo ERROR Set URL error >>error.log")
 
         elif event == 'Set Long Slow':
-            os.system("meshtastic --setch-longslow")
+            try:
+                os.system("meshtastic --setch-longslow")
+            except:
+                os.system("echo ERROR Set Channel LongSlow >>error.log")
 
         elif event == 'Set Short Fast':
             os.system("meshtastic --setch-shortfast")
