@@ -8,19 +8,15 @@ from pubsub import pub
 
 
 """
-
-
     All windows are immediately visible.  Each window updates the other.
+    Window1 - main Window
+    Window2 - Firmware Window
+    Window3 - Radio Window
 
-    There's an added capability to "re-open" window 2 should it be closed.  This is done by simply calling the make_win2VERSION function
-    again when the button is pressed in window 1.
-
-    The program exits when all windows have been closed
-
-    Copyright 2020 PySimpleGUI.org
+    Copyright 2021 Zebus Jesus
 """
 
-def make_win1API():
+def make_win1API():  ##define window one layout and contents
     sg.theme('DarkAmber')
     layout = [[sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
               [sg.Button('Radio Information'), sg.Button('Help'), sg.Button('QR')],
@@ -39,7 +35,7 @@ def make_win1API():
     return sg.Window('Meshtastic API', layout, finalize=True)
 
 
-def make_win2VERSION():
+def make_win2VERSION():  ##define Frimware Window loayout and conents
     layout = [[sg.Text('Hardware and  Firmware build selection')],
                [sg.Checkbox('T-Beam',key='-T-Beam-'),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
@@ -55,7 +51,7 @@ def make_win2VERSION():
               ]
     return sg.Window('Firmware Utility', layout, finalize=True)
 
-def make_win3():
+def make_win3():  ##define Radio Window Layout and contents
     layout = [[sg.Text('Window 3')],
               #[sg.Text('Enter something to output to Window 1')],
               #[sg.Input(key='-IN-', enable_events=True)],
@@ -65,10 +61,10 @@ def make_win3():
               [sg.Button('Connect to Radio'), sg.Button('Exit'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True)
 
-try:
-    interface = meshtastic.SerialInterface()
-except:
-    print('No Radio Connected')
+#try:
+#    interface = meshtastic.SerialInterface()
+#except:
+#    print('No Radio Connected')
 
 def main():
     window1API, window2, window3 = make_win1API(), make_win2VERSION(), make_win3()
@@ -94,9 +90,9 @@ def main():
             elif window == window3:
                 window3 = None
 
-        elif event == 'Close Radio Connection':
-            output_window = window3
-            os.system("devcon.exe hwids * >>hwid.txt")
+        ##elif event == 'Close Radio Connection':
+            #output_window = window3
+            #os.system("devcon.exe hwids * >>hwid.txt")
 
             #meshtastic.SreamInterface.close()
 
@@ -119,13 +115,13 @@ def main():
 
         elif event == 'Connect to Radio':
             output_window = window3
-            interface = meshtastic.SerialInterface()
+            ##interface = meshtastic.SerialInterface()
             def onReceive(packet, interface): # called when a packet arrives
                 print(f"Received: {packet}")
 
             def onConnection(interface, topic=pub.AUTO_TOPIC): # called when we (re)connect to the radio
                 # defaults to broadcast, specify a destination ID if you wish
-                interface.sendText("hello mesh")
+                meshtastic.SerialInterface().sendText("hello mesh")
 
             print(pub.subscribe(onReceive, "meshtastic.receive"))
             print(pub.subscribe(onConnection, "meshtastic.connection.established"))
@@ -141,11 +137,12 @@ def main():
         elif event == 'Help': #if user clicks the help button
             os.system("meshtastic -h && pause") #output meshtastic help via cmd prompt
 
-        elif event == 'QR':
+        elif event == 'QR':#if user clicks QR button
             try:
-                os.system("meshtastic --qr >QR.png")
+                os.system("meshtastic --qr >QR.tmp")
             except:
-                print('error')
+                os.system("echo ERROR QR >>error.log")
+
 
         elif event == 'Set Channel':
             try:
@@ -165,7 +162,11 @@ def main():
                 os.system("echo ERROR Set Channel LongSlow >>error.log")
 
         elif event == 'Set Short Fast':
-            os.system("meshtastic --setch-shortfast")
+            try:
+                os.system("meshtastic --setch-shortfast")
+            except:
+                os.system("echo ERROR Set Channel ShortFast >>error.log")
+
 
         elif event == 'Set Owner':
             os.system("meshtastic --setowner "+values['-OWNERINPUT-'])
@@ -196,7 +197,7 @@ def main():
                     firmwareID = "-tlora"
                 elif event == values['-LoRa Relay-'] == True:
                     firmwareID = "-lora-relay"
-                url = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.33/firmware-1.1.33.zip'
+                url = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.48/firmware-1.1.48.zip'
                 firmwarefile = requests.get(url)
                 open('test.zip', 'wb').write(firmwarefile.content)
             except:
