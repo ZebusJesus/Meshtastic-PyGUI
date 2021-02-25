@@ -3,20 +3,18 @@ import os
 import requests
 import meshtastic
 import subprocess
-import time
 from pubsub import pub
-from zipfile import ZipFile
 
 
 
-#"""
-#    All windows are immediately visible.  Each window updates the other.
-#    Window1 - main Window
-#    Window2 - Firmware Window
-#    Window3 - Radio Window
+"""
+    All windows are immediately visible.  Each window updates the other.
+    Window1 - main Window
+    Window2 - Firmware Window
+    Window3 - Radio Window
 
-#    Copyright 2021 Zebus Jesus
-##"""
+    Copyright 2021 Zebus Jesus
+"""
 
 def make_win1API():  ##define window one layout and contents
     sg.theme('DarkAmber')
@@ -39,22 +37,23 @@ def make_win1API():  ##define window one layout and contents
 
 def make_win2VERSION():  ##define Frimware Window loayout and conents
     layout = [[sg.Text('Hardware and  Firmware build selection')],
-               [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
+               [sg.Checkbox('T-Beam',key='-T-Beam-'),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               [sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
-               [sg.Checkbox('1.1.48',key='-1.1.48-'), sg.Checkbox('1.1.33',key='-1.1.33-'), sg.Checkbox('Alpha'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               [sg.Checkbox('ANZ'),sg.Checkbox('CN'),sg.Checkbox('EU865'),sg.Checkbox('EU443'),sg.Checkbox('JP'),sg.Checkbox('KR'),sg.Checkbox('US')],
+               [sg.Checkbox('Stable'), sg.Checkbox('Beta'), sg.Checkbox('Alpha'), sg.Checkbox('Hamster Nightly')],
                [sg.Button('Download Firmware')],
+               [sg.StatusBar('-Status-')],
                [sg.Input(key='_FILES_'), sg.FilesBrowse()],
-               [sg.Text('Firmware festure not complete, the download just downloads the binary to a firmware.zip')],
-               [sg.Text('and is extracted to a folder called firmware.')],
-               [sg.Text('You can then browse to the needed binary in the firmware folder.')],
+               [sg.Text('Firmware festure not complete, the download just downloads the 1.33 binary to a test.zip')],
+               [sg.Text('If you extract that folder you will find the binareies you need and you can browse to the')],
+               [sg.Text('needed one using the browse button and then use the flash or update buttons.')],
                [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Cancel()],
                [sg.Button('Exit')]
               ]
     return sg.Window('Firmware Utility', layout, finalize=True)
 
 def make_win3():  ##define Radio Window Layout and contents
-    layout = [[sg.Text('Radio I/O')],
+    layout = [[sg.Text('Window 3')],
               #[sg.Text('Enter something to output to Window 1')],
               #[sg.Input(key='-IN-', enable_events=True)],
               #[sg.Text(size=(25,1), key='-OUTPUT-')],
@@ -119,143 +118,121 @@ def main():
             output_window = window3
             ##interface = meshtastic.SerialInterface()
             def onReceive(packet, interface): # called when a packet arrives
-                print(f'Received: {packet}')
+                print(f"Received: {packet}")
 
             def onConnection(interface, topic=pub.AUTO_TOPIC): # called when we (re)connect to the radio
                 # defaults to broadcast, specify a destination ID if you wish
-                meshtastic.SerialInterface().sendText('hello mesh')
+                meshtastic.SerialInterface().sendText("hello mesh")
 
-            print(pub.subscribe(onReceive, 'meshtastic.receive'))
-            print(pub.subscribe(onConnection, 'meshtastic.connection.established'))
+            print(pub.subscribe(onReceive, "meshtastic.receive"))
+            print(pub.subscribe(onConnection, "meshtastic.connection.established"))
             # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
 
 
         elif event == 'Radio Information': #if user clicks Radio Information
-            os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
+            os.system("meshtastic --info >radioinfo.txt") # outout radio information to txt file
 
         elif event == 'Send Message': #if user clicks send message take input and send to radio
-            os.system('meshtastic --sendtext '+ values['-MSGINPUT-'])
+            os.system("meshtastic --sendtext "+ values['-MSGINPUT-'])
 
         elif event == 'Help': #if user clicks the help button
-            os.system('meshtastic -h && pause') #output meshtastic help via cmd prompt
+            os.system("meshtastic -h && pause") #output meshtastic help via cmd prompt
 
         elif event == 'QR':#if user clicks QR button
             try:
-                os.system('meshtastic --qr >QR.tmp')
+                os.system("meshtastic --qr >QR.tmp")
             except:
-                os.system('echo ERROR QR >>error.log')
+                os.system("echo ERROR QR >>error.log")
 
 
         elif event == 'Set Channel': #if user clicks Set Channel button
             try:
-                os.system('meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
+                os.system("meshtastic --setchan spread_factor "+values['-SFINPUT-']+" --setchan coding_rate "+values['-CRINPUT-']+" --setchan bandwidth "+values['-BWINPUT-'])
             except:
-                os.system('echo ERROR Set Channel Event >>error.log')
+                os.system("echo ERROR Set Channel Event >>error.log")
         elif event == 'Set URL':
             try:
-                os.system('meshtatic --seturl '+values['-URLINPUT-'])
+                os.system("meshtatic --seturl "+values['-URLINPUT-'])
             except:
-                os.system('echo ERROR Set URL error >>error.log')
+                os.system("echo ERROR Set URL error >>error.log")
 
         elif event == 'Set Long Slow':
             try:
-                os.system('meshtastic --setch-longslow')
+                os.system("meshtastic --setch-longslow")
             except:
-                os.system('echo ERROR Set Channel LongSlow >>error.log')
+                os.system("echo ERROR Set Channel LongSlow >>error.log")
 
         elif event == 'Set Short Fast':
             try:
-                os.system('meshtastic --setch-shortfast')
+                os.system("meshtastic --setch-shortfast")
             except:
-                os.system('echo ERROR Set Channel ShortFast >>error.log')
+                os.system("echo ERROR Set Channel ShortFast >>error.log")
 
 
         elif event == 'Set Owner':
-            os.system('meshtastic --setowner '+values['-OWNERINPUT-'])
+            os.system("meshtastic --setowner "+values['-OWNERINPUT-'])
 
         elif event == 'Set Lattitude':
-            os.system('meshtastic --setlat '+values['-SETLAT-'])
+            os.system("meshtastic --setlat "+values['-SETLAT-'])
 
         elif event == 'Set Longitude':
-            os.system('meshtastic --setlon '+values['-SETLON-'])
+            os.system("meshtastic --setlon "+values['-SETLON-'])
 
         elif event == 'Set Altitude':
-            os.system('meshtastic --setalt '+values['-SETALT-'])
+            os.system("meshtastic --setalt "+values['-SETALT-'])
 
         elif event == 'Set Router':
-            os.system('echo meshtastic --setrouter')
+            os.system("echo meshtastic --setrouter")
 
         elif event == 'Unset Router':
-            os.system('echo meshtastic --unset-router')
+            os.system("echo meshtastic --unset-router")
 
         elif event == 'Download Firmware':
             firmwareID = 'NULL'
-            firmwarRegion = 'NULL'
-            binVersion = 'NULL'
             try:
-                if values['-T-Beam-']:
+                def download(url, filename):
+                    with open(filename, 'wb') as f:
+                        response = requests.get(url, stream=True)
+                        total = response.headers.get('content-length')
+
+                        if total is None:
+                            f.write(response.content)
+                        else:
+                            downloaded = 0
+                            total = int(total)
+                            for data in response.iter_content(chunk_size=max(int(total/1000), 1024*1024)):
+                                downloaded += len(data)
+                                f.write(data)
+                                done = int(50*downloaded/total)
+                                sys.stdout.write('\r[{}{}]'.format('█' * done, '.' * (50-done)))
+                                sys.stdout.flush()
+                                sys.stdout.write('\n')
+
+                download('https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.48/firmware-1.1.48.zip', '1.1.48.zip')
+                if event == values['-T-Beam-'] == True:
                     firmwareID = '-tbeam'
-                elif values['-heltec-']:
-                    firmwareID = '-heltec'
-                elif values['-T-LoRa-']:
-                    firmwareID = '-tlora'
-                elif values['-LoRa Relay-']:
-                    firmwareID = '-lora-relay'
-
+                elif event == values['-heltec-'] == True:
+                    firmwareID = "-heltec"
+                elif event == values['-T-LoRa-'] == True:
+                    firmwareID = "-tlora"
+                elif event == values['-LoRa Relay-'] == True:
+                    firmwareID = "-lora-relay"
+                #url = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.48/firmware-1.1.48.zip'
+                #firmwarefile = requests.get(url)
+                #open('test.zip', 'wb').write(firmwarefile.content)
 
             except:
-                print('firmwareid error')
-
+                print('error')
+        elif event == "Flash Firmware": # this command requires .sh files be able to be handled by the system, windows can us
             try:
-                if values['-ANZ-']:
-                    firmwarRegion = '-ANZ'
-                elif values['-CN-']:
-                    firmwarRegion = '-CN'
-                elif values['-JP-']:
-                    firmwarRegion = '-JP'
-                elif values['-KR-']:
-                    firmwarRegion = '-KR'
-                elif values['-EU443-']:
-                    firmwarRegion = '-EU443'
-                elif values['-EU865-']:
-                    firmwarRegion = '-EU865'
+                os.system("sh device-install.sh -f "+values['_FILES_'])
             except:
-                print('frimware region error')
-
+                os.system("echo ERROR Flash Firmware Event >>error.log")
+        elif event == "Update Firmware":# update firmware while keeping settings in place
             try:
-                if values['-1.1.48-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.48/firmware-1.1.48.zip'
-                elif values['-1.1.33-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.33/firmware-1.1.33.zip'
-                elif values['-HN-']:
-                    dateBuild = (time.strftime("%y-%m-%d"))
-                    hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
-                    binVersion = hamURL+'20'+dateBuild+'.zip'
+                os.system("sh device-update.sh -f "+values['_FILES_'])
             except:
-                print('bin not pressent')
-
-            try:
-                url = binVersion
-                firmwarefile = requests.get(url)
-                open('firmware.zip', 'wb').write(firmwarefile.content)
-
-                with ZipFile('firmware.zip', 'r') as zipObj:
-                # Extract all the contents of zip file in current directory
-
-                    zipObj.extractall(path='firmware')
-                    print(firmwareID+firmwarRegion)
-            except:
-                print(binVersion)
-        elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
-            try:
-                os.system('sh device-install.sh -f '+values['_FILES_'])
-            except:
-                os.system('echo ERROR Flash Firmware Event >>error.log')
-        elif event == 'Update Firmware':# update firmware while keeping settings in place
-            try:
-                os.system('sh device-update.sh -f '+values['_FILES_'])
-            except:
-                os.system('echo ERROR Firmware update Event >>error.log')
+                os.system("echo ERROR Firmware update Event >>error.log")
 
 
 
