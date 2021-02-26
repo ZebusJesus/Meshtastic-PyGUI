@@ -21,7 +21,7 @@ sudo pip3 install markdown twine
 ```
 
 ```
-Windows users should not that the way windows handles COM ports is not the same as other systems.  If ran as admin "READ THE CODE BEFORE YOU RUN" then it is not an issue but if running as a normal user profile then you will have to unplug and plug the radio back in, this will release the COM port and make a new connection.  This limitation can cause the GUI to crash if the connection to the radio hangs.
+Windows users should note that the way windows handles COM ports is not the same as other systems.  If ran as admin "READ THE CODE BEFORE YOU RUN" then it is not an issue but if running as a normal user profile then you will have to unplug and plug the radio back in, this will release the COM port and make a new connection.  This limitation can cause the GUI to crash if the connection to the radio hangs.
 ```
 
 Edit setup.py to have your new version number before each release (then check that change into github)
