@@ -8,21 +8,10 @@ from pubsub import pub
 from zipfile import ZipFile
 
 
-
-#"""
-#    All windows are immediately visible.  Each window updates the other.
-#    Window1 - main Window
-#    Window2 - Firmware Window
-#    Window3 - Radio Window
-
-#    Copyright 2021 Zebus Jesus
-##"""
-
 def make_win1API():  ##define window one layout and contents
     sg.theme('DarkAmber')
     layout = [[sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
               [sg.Button('Radio Information'), sg.Button('Help'), sg.Button('QR')],
-              [sg.Text('Make sure to enclose message in " ", this allows for spaces in messages')],
               [sg.Button('Set Channel Settings'), sg.Text('SF'), sg.InputText(size=(10,1),key='-SFINPUT-'), sg.Text('CR'), sg.InputText(size=(10,1),key='-CRINPUT-'),
               sg.Text('BW'), sg.InputText(size=(10,1),key='-BWINPUT-')],
               [sg.Button('Set Long Slow'),sg.Button('Set Short Fast')],
@@ -64,10 +53,6 @@ def make_win3():  ##define Radio Window Layout and contents
               [sg.Button('Connect to Radio'), sg.Button('Exit'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True)
 
-#try:
-#    interface = meshtastic.SerialInterface()
-#except:
-#    print('No Radio Connected')
 
 def main():
     window1API, window2, window3 = make_win1API(), make_win2VERSION(), make_win3()
@@ -267,9 +252,6 @@ def main():
                 os.system('meshtastic --set wifi_ap_mode false --setstr wifi_ssid '+values['-WifiSSID-']+' --setstr wifi_password '+values['-WifiPASS-'])
             except:
                 print('error wifi ssid')
-
-
-
 
 
 if __name__ == '__main__':
