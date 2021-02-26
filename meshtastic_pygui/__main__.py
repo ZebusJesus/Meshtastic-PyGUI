@@ -27,11 +27,12 @@ def make_win1API():  ##define window one layout and contents
               sg.Text('BW'), sg.InputText(size=(10,1),key='-BWINPUT-')],
               [sg.Button('Set Long Slow'),sg.Button('Set Short Fast')],
               [sg.Button('Set URL'), sg.InputText(key='-URLINPUT-')],
+              [sg.Button('Set Wifi'),sg.Text('Wifi SSID'),sg.InputText(size=(20,1),key='-WifiSSID-'),sg.Text('Wifi Password'),sg.InputText(size=(20,1),key='-WifiPASS-')],
               [sg.Button('Set Owner'), sg.InputText(key='-OWNERINPUT-')],
               [sg.Button('Set Lattitude'),sg.InputText(size=(10,1),key='-SETLAT-'), sg.Button('Set Longitude'), sg.InputText(size=(10,1),key='-SETLON-'),
               sg.Button('Set Altitude'), sg.InputText(size=(10,1),key='-SETALT-')],
               [sg.Button('Set Router'), sg.Button('Unset Router')],
-              [sg.Button('Reopen2'), sg.Button('Reopen3')],
+              [sg.Button('Firmware Window'), sg.Button('Radio Window')],
               [sg.Button('Exit')]
              ]
     return sg.Window('Meshtastic API', layout, finalize=True)
@@ -98,12 +99,12 @@ def main():
 
             #meshtastic.SreamInterface.close()
 
-        elif event == 'Reopen2':
+        elif event == 'Firmware Window':
             if not window2:
                 window2 = make_win2VERSION()
                 window2.move(window1API.current_location()[0], window1API.current_location()[1] + 220)
 
-        elif event == 'Reopen3':
+        elif event == 'Radio Window':
             if not window3:
                 window3 = make_win3()
                 window3.move(window1API.current_location()[0], window1API.current_location()[1] - 220)
@@ -183,7 +184,7 @@ def main():
             os.system('meshtastic --setalt '+values['-SETALT-'])
 
         elif event == 'Set Router':
-            os.system('echo meshtastic --setrouter')
+            os.system('meshtastic --setrouter')
 
         elif event == 'Unset Router':
             os.system('echo meshtastic --unset-router')
@@ -246,16 +247,28 @@ def main():
                     print(firmwareID+firmwarRegion)
             except:
                 print(binVersion)
+
         elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
             try:
                 os.system('sh device-install.sh -f '+values['_FILES_'])
             except:
                 os.system('echo ERROR Flash Firmware Event >>error.log')
+
+
         elif event == 'Update Firmware':# update firmware while keeping settings in place
             try:
                 os.system('sh device-update.sh -f '+values['_FILES_'])
             except:
                 os.system('echo ERROR Firmware update Event >>error.log')
+
+
+        elif event == 'Set Wifi':
+            try:
+                os.system('meshtastic --set wifi_ap_mode false --setstr wifi_ssid '+values['-WifiSSID-']+' --setstr wifi_password '+values['-WifiPASS-'])
+            except:
+                print('error wifi ssid')
+
+
 
 
 
