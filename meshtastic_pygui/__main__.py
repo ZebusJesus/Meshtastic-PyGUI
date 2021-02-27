@@ -48,7 +48,7 @@ def make_win3():  ##define Radio Window Layout and contents
               #[sg.Text('Enter something to output to Window 1')],
               #[sg.Input(key='-IN-', enable_events=True)],
               #[sg.Text(size=(25,1), key='-OUTPUT-')],
-              [sg.Output(size=(20,20),key='-OUTPUT_RADIO-')],
+              [sg.Output(size=(80,25),key='-OUTPUT_RADIO-')],
               [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
               [sg.Button('Connect to Radio'), sg.Button('Exit'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True)
@@ -103,7 +103,7 @@ def main():
 
         elif event == 'Connect to Radio':
             output_window = window3
-            ##interface = meshtastic.SerialInterface()
+            interface = meshtastic.SerialInterface()
             def onReceive(packet, interface): # called when a packet arrives
                 print(f'Received: {packet}')
 
