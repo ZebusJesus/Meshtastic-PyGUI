@@ -8,7 +8,7 @@ from pubsub import pub
 from zipfile import ZipFile
 
 
-def make_win1API():  ##define window one layout and contents
+def make_win1API():  ##define window one layout an3d contents
     sg.theme('DarkAmber')
     layout = [[sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
               [sg.Button('Radio Information'), sg.Button('Help'), sg.Button('QR')],
@@ -32,7 +32,7 @@ def make_win2VERSION():  ##define Frimware Window loayout and conents
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
                [sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
-               [sg.Checkbox('1.1.48',key='-1.1.48-'), sg.Checkbox('1.1.33',key='-1.1.33-'), sg.Checkbox('Alpha'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               [sg.Checkbox('1.1.48',key='-1.1.48-'), sg.Checkbox('1.1.33',key='-1.1.33-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Input(key='_FILES_'), sg.FilesBrowse()],
                [sg.Text('Firmware festure not complete, the download just downloads the binary to a firmware.zip')],
@@ -45,9 +45,6 @@ def make_win2VERSION():  ##define Frimware Window loayout and conents
 
 def make_win3():  ##define Radio Window Layout and contents
     layout = [[sg.Text('Radio I/O')],
-              #[sg.Text('Enter something to output to Window 1')],
-              #[sg.Input(key='-IN-', enable_events=True)],
-              #[sg.Text(size=(25,1), key='-OUTPUT-')],
               [sg.Output(size=(80,25),key='-OUTPUT_RADIO-')],
               [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
               [sg.Button('Connect to Radio'), sg.Button('Exit'),sg.Button('Close Radio Connection')]]
@@ -78,11 +75,13 @@ def main():
             elif window == window3:
                 window3 = None
 
-        ##elif event == 'Close Radio Connection':
-            #output_window = window3
+        elif event == 'Close Radio Connection':
+            output_window = window3
             #os.system("devcon.exe hwids * >>hwid.txt")
-
-            #meshtastic.SreamInterface.close()
+            try:
+                meshtastic.SreamInterface.close()
+            except:
+                print('Error Closing Serial Connection')
 
         elif event == 'Firmware Window':
             if not window2:
@@ -213,6 +212,8 @@ def main():
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.48/firmware-1.1.48.zip'
                 elif values['-1.1.33-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.33/firmware-1.1.33.zip'
+                elif values['-1.1.50-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.50/firmware-1.1.50.zip'
                 elif values['-HN-']:
                     dateBuild = (time.strftime("%y-%m-%d"))
                     hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
