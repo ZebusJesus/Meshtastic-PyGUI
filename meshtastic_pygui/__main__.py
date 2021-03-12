@@ -147,13 +147,13 @@ def main():
             sg.popup("Properties")
 # ----- /Properties ----- #
 
-#        elif event == 'Close Radio Connection':
-#            output_window = window3
+        elif event == 'Close Radio Connection':
+            output_window = window3
             #os.system("devcon.exe hwids * >>hwid.txt")
-#            try:
-#                meshtastic.SreamInterface.close()
-#            except:
-#                print('Error Closing Serial Connection')
+            try:
+                os.sys('meshtastic.SerialInterface().close(self)')
+            except:
+                print('Error Closing Serial Connection')
 
 # ----- Open Firmware Window ----- #
         elif event == 'Firmware Window':
