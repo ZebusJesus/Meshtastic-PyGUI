@@ -5,6 +5,9 @@ A python Based GUI that uses the Meshtastic API
 # Dependencies
 python 3.7 or above
 pip -- for install python Modules
+Meshtastic 1.2.6   pip install --update Meshtastic
+PySimpleGUI --  pip install PySimpleGUI
+
 
 
 Python Modules:
@@ -13,6 +16,8 @@ Python Modules:
   os
   requests
   subprocess
+  time
+  zipfile
 
 ## A note for developers of this tool
 

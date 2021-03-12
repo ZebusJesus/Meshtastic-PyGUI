@@ -16,16 +16,18 @@ import time
 from pubsub import pub
 from zipfile import ZipFile
 
+# ----- </IMports> ----- #
 
 
 # ------ <Menu_Definition> ------ #
 
-menu_def = [['&File', ['&Open     Ctrl-O', '&Save       Ctrl-S', '&Properties', 'E&xit']],
+menu_def = [['&File', ['&Properties', 'E&xit']],
             ['&Edit', ['&Paste', ['Special', 'Normal', ], 'Undo'], ],
-            ['&Toolbar', ['---', 'Firmware Window', 'Command &2',
+            ['&Toolbar', ['---', 'Firmware Window', 'Radio Window',
                           '---', 'Command &3', 'Command &4']],
             ['&Help', '&About...'], ]
 
+# ----- </Menu Definition> ----- #
 
 
 # ------ GUI_Defintion ------ #
@@ -66,11 +68,11 @@ def make_win2VERSION():  ##define Frimware Window loayout and conents
                [sg.Text('Hardware and  Firmware build selection')],
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               [sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
-               [sg.Checkbox('1.1.48',key='-1.1.48-'), sg.Checkbox('1.1.33',key='-1.1.33-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               #[sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
+               [sg.Checkbox('1.2.9',key='-1.2.9-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Input(key='_FILES_'), sg.FilesBrowse()],
-               [sg.Text('Firmware festure not complete, the download just downloads the binary to a firmware.zip')],
+               #[sg.Text('Firmware festure not complete, the download just downloads the binary to a firmware.zip')],
                [sg.Text('and is extracted to a folder called firmware.')],
                [sg.Text('You can then browse to the needed binary in the firmware folder.')],
                [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Cancel()],
@@ -151,7 +153,7 @@ def main():
             output_window = window3
             #os.system("devcon.exe hwids * >>hwid.txt")
             try:
-                os.sys('meshtastic.SerialInterface().close(self)')
+                meshtastic.SerialInterface().close(self)
             except:
                 print('Error Closing Serial Connection')
 
@@ -319,10 +321,10 @@ def main():
 
             try:
                 # ----- Firmware Downlaod URL----- #
-                if values['-1.1.48-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.48/firmware-1.1.48.zip'
-                elif values['-1.1.33-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.33/firmware-1.1.33.zip'
+                if values['-1.2.6-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.6/firmware-1.2.6.zip'
+                elif values['-1.2.9-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.9/firmware-1.2.9.zip'
                 elif values['-1.1.50-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.50/firmware-1.1.50.zip'
                 elif values['-HN-']:
