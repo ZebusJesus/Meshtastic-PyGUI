@@ -15,96 +15,18 @@ import subprocess
 import time
 from pubsub import pub
 from zipfile import ZipFile
+from window_layout import make_win1API, make_win2VERSION, make_win3
 
 # ----- </IMports> ----- #
-
-
-# ------ <Menu_Definition> ------ #
-
-menu_def = [['&File', ['&Properties', 'E&xit']],
-            ['&Edit', ['&Paste', ['Special', 'Normal', ], 'Undo'], ],
-            ['&Toolbar', ['---', 'Firmware Window', 'Radio Window',
-                          '---', 'Command &3', 'Command &4']],
-            ['&Help', '&About...'], ]
-
-# ----- </Menu Definition> ----- #
-
-
-# ------ GUI_Defintion ------ #
-
-
-
-#------- Main_Window ------- #
-def make_win1API():
-    sg.theme('DarkAmber')
-    sg.set_options(element_padding=(0, 0))
-
-
-    layout = [
-              [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
-              [sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
-              [sg.Button('Radio Information'), sg.Button('Help'), sg.Button('QR')],
-              [sg.Button('Set Channel Settings'), sg.Text('SF'), sg.InputText(size=(10,1),key='-SFINPUT-'), sg.Text('CR'), sg.InputText(size=(10,1),key='-CRINPUT-'),
-              sg.Text('BW'), sg.InputText(size=(10,1),key='-BWINPUT-')],
-              [sg.Button('Set Long Slow'),sg.Button('Set Short Fast')],
-              [sg.Button('Set URL'), sg.InputText(key='-URLINPUT-')],
-              [sg.Button('Set Wifi'),sg.Text('Wifi SSID'),sg.InputText(size=(20,1),key='-WifiSSID-'),sg.Text('Wifi Password'),sg.InputText(size=(20,1),key='-WifiPASS-')],
-              [sg.Button('Set Owner'), sg.InputText(key='-OWNERINPUT-')],
-              [sg.Button('Set Lattitude'),sg.InputText(size=(10,1),key='-SETLAT-'), sg.Button('Set Longitude'), sg.InputText(size=(10,1),key='-SETLON-'),
-              sg.Button('Set Altitude'), sg.InputText(size=(10,1),key='-SETALT-')],
-              [sg.Button('Set Router'), sg.Button('Unset Router')],
-              [sg.Button('Firmware Window'), sg.Button('Radio Window')],
-              [sg.Button('Close')]
-             ]
-    return sg.Window('Meshtastic API', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
-
-#------- /Main_WIndow ------ #
-
-# ----- Firmware Window ----- #
-
-def make_win2VERSION():  ##define Frimware Window loayout and conents
-    layout = [
-               [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
-               [sg.Text('Hardware and  Firmware build selection')],
-               [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
-                sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               #[sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
-               [sg.Checkbox('1.2.9',key='-1.2.9-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
-               [sg.Button('Download Firmware')],
-               [sg.Input(key='_FILES_'), sg.FilesBrowse()],
-               #[sg.Text('Firmware festure not complete, the download just downloads the binary to a firmware.zip')],
-               [sg.Text('and is extracted to a folder called firmware.')],
-               [sg.Text('You can then browse to the needed binary in the firmware folder.')],
-               [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Cancel()],
-               [sg.Button('Close')]
-              ]
-    return sg.Window('Firmware Utility', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
-
-# ----- /Firmware I/O Window ----- #
-
-# ----- Radio I/O Window ----- #
-
-def make_win3():  ##define Radio Window Layout and contents
-    layout = [
-              [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
-              [sg.Text('Radio I/O')],
-              [sg.Output(size=(80,25),key='-OUTPUT_RADIO-')],
-              [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
-              [sg.Button('Connect to Radio'), sg.Button('Close'),sg.Button('Close Radio Connection')]]
-    return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
-
-# ----- /Radio I/O Window -----#
-
-# ----- /GUI_Defintion ----- #
 
 
 # ----- Draw_Windows ----- #
 def main():
     window1API, window2, window3 = make_win1API(), make_win2VERSION(), make_win3()
 
-    window2.move(window1API.current_location()[0], window1API.current_location()[1]+220)
+    window2.move(window1API.current_location()[0]+220, window1API.current_location()[1]+220)
 
-    window3.move(window1API.current_location()[0], window1API.current_location()[1]+220)
+    window3.move(window1API.current_location()[0], window1API.current_location()[1]+420)
 # ----- /Draw_Windows ----- #
 
 
@@ -146,7 +68,13 @@ def main():
 
 # ----- Properties ----- #
         elif event == 'Properties':
-            sg.popup("Properties")
+            try:
+                os.system('meshtastic --info >radioinfo.txt')
+                f = open('radioinfo.txt', 'r')
+                file_contents = f.read()
+                sg.popup(print(file_contents))
+            except:
+                sg.popup('No Device Present')
 # ----- /Properties ----- #
 
         elif event == 'Close Radio Connection':
@@ -274,12 +202,12 @@ def main():
 
 # ----- Set Router ----- #
         elif event == 'Set Router':
-            os.system('meshtastic --setrouter')
+            os.system('meshtastic --set is_router true')
 # ----- /Set Router ----- #
 
 # ----- Unset Router ----- #
         elif event == 'Unset Router':
-            os.system('echo meshtastic --unset-router')
+            os.system('echo meshtastic --set is_router false')
 # ----- /Unset Router ----- #
 
 # ----- Download Firmware ----- #
@@ -376,8 +304,25 @@ def main():
                 os.system('meshtastic --set wifi_ap_mode true --setstr wifi_ssid '+values['-WifiSSID-']+' --setstr wifi_password '+values['-WifiPASS-'])
             except:
                 print('error wifi ssid')
+
         # ----- /Set Wifi ---- #
 
+        # ----- AP ON ----- #
+
+        elif event == 'AP On':
+            try:
+                os.system('meshtastic --set wifi_ap_mode true')
+            except:
+                print('Error activating AP mode')
+        # ----- /AP ON ----#
+
+        # ----- AP off ----- #
+
+        elif event == 'AP Off':
+            try:
+                os.system('meshtastic --set wifi_ap_mode false')
+            except:
+                print('Error trying to turn AP off ')
 # end Loop
 
 if __name__ == '__main__':
