@@ -250,7 +250,7 @@ def main():
 # ----- Set URL ----- #
         elif event == 'Set URL':
             try:
-                os.system('meshtatic --seturl '+values['-URLINPUT-'])
+                os.system('meshtastic --seturl '+values['-URLINPUT-'])
             except:
                 output_window = window3
                 print('Error setting url')
@@ -392,11 +392,17 @@ def main():
         # ----- /Update firmware ----- #
 
         # ----- Set Wifi ----- #
-        elif event == 'Set Wifi':
+        elif event == 'Set Wifi SSID':
             try:
-                os.system('meshtastic --set wifi_ap_mode true --setstr wifi_ssid '+values['-WifiSSID-']+' --setstr wifi_password '+values['-WifiPASS-'])
+                os.system('meshtastic  --set wifi_ssid '+values['-WifiSSID-'])
             except:
                 print('error wifi ssid')
+
+        elif event == 'Set Wifi Password':
+            try:
+                os.system('meshtastic  --set wifi_password '+values['-WifiPASS-'])
+            except:
+                print('error wifi password')
 
         # ----- /Set Wifi ---- #
 
