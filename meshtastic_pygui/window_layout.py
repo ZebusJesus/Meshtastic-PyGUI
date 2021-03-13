@@ -1,3 +1,9 @@
+# ----- <About> ----- #
+#   Author: Zebus Zebus
+#   Email: zebusjesus@pm.me
+#   Date: 3-13-21
+#   Meshtastic PyGUI
+#
 import PySimpleGUI as sg
 
 # ------ <Menu_Definition> ------ #
@@ -34,7 +40,7 @@ def make_win1API():
              ]
     return sg.Window('Meshtastic API', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
 
-def make_win2VERSION():  ##define Frimware Window loayout and conents
+def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
     layout = [
                [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
                [sg.Text('Hardware and  Firmware build selection')],
@@ -60,6 +66,8 @@ def make_win3():  ##define Radio Window Layout and contents
              [sg.Text('Radio I/O')],
              [sg.Output(size=(80,25),key='-OUTPUT_RADIO-')],
              [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
+             [sg.Button('Send to node'),sg.Text('Messgage use " " if spaces are in message'),sg.InputText(key='-NODE_MSG-'),
+                sg.Text('Node'),sg.InputText(key='-NODE-')],
              [sg.Button('Connect to Radio'), sg.Button('Close'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
 

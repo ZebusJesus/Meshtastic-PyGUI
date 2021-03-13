@@ -1,7 +1,7 @@
 # ----- <About> ----- #
 #   Author: Zebus Zebus
 #   Email: zebusjesus@pm.me
-#   Date: 3-2-21
+#   Date: 3-13-21
 #   Meshtastic PyGUI
 #
 
@@ -15,14 +15,14 @@ import subprocess
 import time
 from pubsub import pub
 from zipfile import ZipFile
-from window_layout import make_win1API, make_win2VERSION, make_win3
+from window_layout import make_win1API, make_win2FIRMWARE, make_win3
 
 # ----- </IMports> ----- #
 
 
 # ----- Draw_Windows ----- #
 def main():
-    window1API, window2, window3 = make_win1API(), make_win2VERSION(), make_win3()
+    window1API, window2, window3 = make_win1API(), make_win2FIRMWARE(), make_win3()
 
     window2.move(window1API.current_location()[0]+220, window1API.current_location()[1]+220)
 
@@ -74,21 +74,24 @@ def main():
                 file_contents = f.read()
                 sg.popup(print(file_contents))
             except:
+                output_window = window3
                 sg.popup('No Device Present')
 # ----- /Properties ----- #
 
         elif event == 'Close Radio Connection':
-            output_window = window3
+
             #os.system("devcon.exe hwids * >>hwid.txt")
             try:
+                output_window = window3
                 meshtastic.SerialInterface().close(self)
             except:
+                output_window = window3
                 print('Error Closing Serial Connection')
 
 # ----- Open Firmware Window ----- #
         elif event == 'Firmware Window':
             if not window2:
-                window2 = make_win2VERSION()
+                window2 = make_win2FIRMWARE()
                 window2.move(window1API.current_location()[0], window1API.current_location()[1] + 220)
 # ----- /Open firmware Window ----- #
 
@@ -100,37 +103,55 @@ def main():
 # ----- /Open Radio I/O Window ----- #
 
         elif event == '-IN-':
-            output_window = window3
+            # output_window = window3
             if output_window:           # if a valid window, then output to it
                 output_window['-OUTPUT-'].update(values['-IN-'])
             else:
                 window['-OUTPUT-'].update('Other window is closed')
 # ----- Open COM connection to Radio ----- #
         elif event == 'Connect to Radio':
-            output_window = window3
-            interface = meshtastic.SerialInterface()
-            def onReceive(packet, interface): # called when a packet arrives
-                print(f'Received: {packet}')
+            try:
+                output_window = window3
+                interface = meshtastic.SerialInterface()
+                def onReceive(packet, interface): # called when a packet arrives
+                    print(f'Received: {packet}')
 
-            def onConnection(interface, topic=pub.AUTO_TOPIC): # called when we (re)connect to the radio
-                # defaults to broadcast, specify a destination ID if you wish
-                meshtastic.SerialInterface().sendText('hello mesh')
+                def onConnection(interface, topic=pub.AUTO_TOPIC): # called when we (re)connect to the radio
+                    # defaults to broadcast, specify a destination ID if you wish
+                    meshtastic.SerialInterface().sendText('hello mesh')
 
-            print(pub.subscribe(onReceive, 'meshtastic.receive'))
-            print(pub.subscribe(onConnection, 'meshtastic.connection.established'))
-            # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
+                print(pub.subscribe(onReceive, 'meshtastic.receive'))
+                print(pub.subscribe(onConnection, 'meshtastic.connection.established'))
+                # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
+            except:
+                output_window = window3
+                print("Error connecting to radio")
 # ---- /Open COM connection to Radio ----- #
 
 # ----- Get Radio info ----- #
         elif event == 'Radio Information': #if user clicks Radio Information
-            os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
+            try:
+                os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
+            except:
+                output_window = window3
+                print('Error getting radio info')
 # ----- /Get Raadio info ---- #
 
 # ----- Send Message ----- #
         elif event == 'Send Message': #if user clicks send message take input and send to radio
-            os.system('meshtastic --sendtext '+ values['-MSGINPUT-'])
+            try:
+                os.system('meshtastic --sendtext '+ values['-MSGINPUT-'])
+            except:
+                output_window = window3
+                print('Error sending message')
 # ----- /Send Message ----- #
 
+        elif event == 'Send Message to node':
+            try:
+                os.system('meshtastic --dest '+ values['-NODE-']+' --sendtext '+values['-NODE_MSG-'])
+            except:
+                output_window = window3
+                print('Error sending message to '+values['-NODE-'])
 # ----- Help ----- #
         elif event == 'Help':
             output_window = window3
@@ -145,6 +166,7 @@ def main():
             try:
                 os.system('meshtastic --qr >QR.tmp')
             except:
+                output_window = window3
                 os.system('echo ERROR QR >>error.log')
 # ----- /QR ------ #
 
@@ -153,6 +175,8 @@ def main():
             try:
                 os.system('meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
             except:
+                output_window = window3
+                print('Error setting channel')
                 os.system('echo ERROR Set Channel Event >>error.log')
 # ------ /Set Channel ----- #
 
@@ -161,6 +185,8 @@ def main():
             try:
                 os.system('meshtatic --seturl '+values['-URLINPUT-'])
             except:
+                output_window = window3
+                print('Error setting url')
                 os.system('echo ERROR Set URL error >>error.log')
 # ----- /Set URL ----- #
 
