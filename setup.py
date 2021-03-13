@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 # This call to setup() does all the work
 setup(
     name="meshtastic_PyGUI",
-    version="2.0",
+    version="2.2",
     description="A pre-alpha python GUI for meshtastic",
     long_description=long_description,
     long_description_content_type="text/markdown",

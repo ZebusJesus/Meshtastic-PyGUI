@@ -60,7 +60,7 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
                #[sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
-               [sg.Checkbox('1.2.9',key='-1.2.9-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               [sg.Checkbox('1.2.10',key='-1.2.10-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Input(key='_FILES_'), sg.FilesBrowse()],
                [sg.Text('The download just downloads the binary to a firmware.zip file in the local folder')],
@@ -344,8 +344,8 @@ def main():
                 # ----- Firmware Downlaod URL----- #
                 if values['-1.2.6-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.6/firmware-1.2.6.zip'
-                elif values['-1.2.9-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.9/firmware-1.2.9.zip'
+                elif values['-1.2.10-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.10/firmware-1.2.10.zip'
                 elif values['-1.1.50-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.50/firmware-1.1.50.zip'
                 elif values['-HN-']:
