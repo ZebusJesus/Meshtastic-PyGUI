@@ -11,8 +11,8 @@ with open("README.md", "r") as fh:
 
 # This call to setup() does all the work
 setup(
-    name="meshtasticPyGUI",
-    version="1.1",
+    name="meshtastic_PyGUI",
+    version="2.0",
     description="A pre-alpha python GUI for meshtastic",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -32,7 +32,7 @@ setup(
     python_requires='>=3.6',
     entry_points={
         "console_scripts": [
-            "mesh-pygui=meshtastic_pygui.__main__:main",
+            "meshtastic_pygui=meshtastic_pygui.__main__:main",
         ]
     },
 )
