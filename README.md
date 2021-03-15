@@ -9,7 +9,7 @@ Meshtastic 1.2.6   pip install --update Meshtastic
 PySimpleGUI --  pip install PySimpleGUI
 
 
-
+```
 Python Modules:
   Meshtaestic
   PySimpleGUI
@@ -19,6 +19,7 @@ Python Modules:
   time
   zipfile
   esptool
+```
 
 ## A note for developers of this tool
 
