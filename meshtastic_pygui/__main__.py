@@ -92,7 +92,7 @@ def make_win3RADIO():  ##define Radio Window Layout and contents
 
 
 # ----- Draw_Windows ----- #
-def main():
+def window_event_loop():
     window1API, windows2FIRMWARE, window3RADIO = make_win1API(), make_win2FIRMWARE(), make_win3RADIO()
 
     windows2FIRMWARE.move(window1API.current_location()[0]-220, window1API.current_location()[1]+220)
@@ -144,7 +144,7 @@ def main():
                 f = open('radioinfo.txt', 'r')
                 file_contents = f.read()
                 sg.popup(print(file_contents))
-            except:
+            except Exception:
                 output_window = window3RADIO
                 sg.popup('No Device Present')
 # ----- /Properties ----- #
@@ -155,7 +155,7 @@ def main():
             try:
                 output_window = window3RADIO
                 meshtastic.SerialInterface().close(self)
-            except:
+            except Exception:
                 output_window = window3RADIO
                 sg.popup('Error Closing Serial Connection')
 
@@ -189,7 +189,7 @@ def main():
                 print(pub.subscribe(onReceive, 'meshtastic.receive'))
                 print(pub.subscribe(onConnection, 'meshtastic.connection.established'))
                 # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
-            except:
+            except Exception:
                 output_window = window3RADIO
                 print("Error connecting to radio")
 # ---- /Open COM connection to Radio ----- #
@@ -198,7 +198,7 @@ def main():
         elif event == 'Radio Information': #if user clicks Radio Information
             try:
                 os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
-            except:
+            except Exception:
                 output_window = window3RADIO
                 sg.popup('Error getting radio info')
 # ----- /Get Raadio info ---- #
@@ -207,7 +207,7 @@ def main():
         elif event == 'Send Message': #if user clicks send message take input and send to radio
             try:
                 os.system('meshtastic --sendtext '+ values['-MSGINPUT-'])
-            except:
+            except Exception:
                 output_window = window3RADIO
                 sg.popup('Error sending message')
 # ----- /Send Message ----- #
@@ -215,7 +215,7 @@ def main():
         elif event == 'Send Message to node':
             try:
                 os.system('meshtastic --dest '+ values['-NODE-']+' --sendtext '+values['-NODE_MSG-'])
-            except:
+            except Exception:
                 output_window = window3RADIO
                 sg.popup('Error sending message to '+values['-NODE-'])
 # ----- Help ----- #
@@ -231,7 +231,7 @@ def main():
         elif event == 'QR':#if user clicks QR button
             try:
                 os.system('meshtastic --qr >QR.tmp')
-            except:
+            except Exception:
                 output_window = window3RADIO
                 os.system('echo ERROR QR >>error.log')
 # ----- /QR ------ #
@@ -240,7 +240,7 @@ def main():
         elif event == 'Set Channel': #if user clicks Set Channel button
             try:
                 os.system('meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
-            except:
+            except Exception:
                 output_window = window3RADIO
                 sg.popup('Error setting channel')
                 os.system('echo ERROR Set Channel Event >>error.log')
@@ -250,7 +250,7 @@ def main():
         elif event == 'Set URL':
             try:
                 os.system('meshtastic --seturl '+values['-URLINPUT-'])
-            except:
+            except Exception:
                 output_window = window3RADIO
                 sg.popup('Error setting url')
                 os.system('echo ERROR Set URL error >>error.log')
@@ -260,7 +260,7 @@ def main():
         elif event == 'Set Long Slow':
             try:
                 os.system('meshtastic --setch-longslow')
-            except:
+            except Exception:
                 os.system('echo ERROR Set Channel LongSlow >>error.log')
 # ------ /Set Long Slow ----- #
 
@@ -268,7 +268,7 @@ def main():
         elif event == 'Set Short Fast':
             try:
                 os.system('meshtastic --setch-shortfast')
-            except:
+            except Exception:
                 os.system('echo ERROR Set Channel ShortFast >>error.log')
 # ----- /Set Shor Fast ----- #
 
@@ -321,7 +321,7 @@ def main():
                     dateBuild = (time.strftime("%y-%m-%d"))
                     hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
                     binVersion = hamURL+'20'+dateBuild+'.zip'
-            except:
+            except Exception:
                 sg.popup('bin not pressent')
                 # ----- /Firmware Download URL ----- #
 
@@ -337,7 +337,7 @@ def main():
                     # Extract all the contents of zip file in current directory
                     zipObj.extractall(path='firmware')
                     #print(firmwareID+firmwarRegion)
-            except:
+            except Exception:
                 print(binVersion)
 
         # ----- Flash Firmware ----- #
@@ -352,7 +352,7 @@ def main():
                 os.system('esptool.py --baud 921600 write_flash 0x00390000 spiffs-*.bin')
                 os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'])
 
-            except:
+            except Exception:
                 os.system('echo ERROR Flash Firmware Event >>error.log')
         # ----- /Flash Firmware ----- #
 
@@ -363,27 +363,27 @@ def main():
                 # script must be present in the parent folder in order for flash function to work
                 # os.system('sh device-update.sh -f '+values['_FILES_'])
                 os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'] )
-            except:
+            except Exception:
                 os.system('echo ERROR Firmware update Event >>error.log')
         # ----- /Update firmware ----- #
 
         elif event == 'Erase Firmware':
             try:
                 os.system('esptool.py --baud 921600 erase_flash')
-            except:
+            except Exception:
                 sg.popup('error erasing firmware')
 
         # ----- Set Wifi ----- #
         elif event == 'Set Wifi SSID':
             try:
                 os.system('meshtastic  --set wifi_ssid '+values['-WifiSSID-'])
-            except:
+            except Exception:
                 sg.popup('error wifi ssid')
 
         elif event == 'Set Wifi Password':
             try:
                 os.system('meshtastic  --set wifi_password '+values['-WifiPASS-'])
-            except:
+            except Exception:
                 sg.popup('error wifi password')
 
         # ----- /Set Wifi ---- #
@@ -393,7 +393,7 @@ def main():
         elif event == 'AP On':
             try:
                 os.system('meshtastic --set wifi_ap_mode true')
-            except:
+            except Exception:
                 sg.popup('Error activating AP mode')
         # ----- /AP ON ----#
 
@@ -402,7 +402,7 @@ def main():
         elif event == 'AP Off':
             try:
                 os.system('meshtastic --set wifi_ap_mode false')
-            except:
+            except Exception:
                 sg.popup('Error trying to turn AP o ff ')
 
         # ----- /AP Off ----- #
@@ -411,11 +411,11 @@ def main():
         elif event == 'Factory Reset':
             try:
                 os.system('meshtastic --set factory_reset true')
-            except:
+            except Exception:
                 sg.popup('Error Resetting Radio ')
 
 
 # end Loops
 
 if __name__ == '__main__':
-    main()
+    window_event_loop()
