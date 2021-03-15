@@ -3,6 +3,7 @@
 #   Email: zebusjesus@pm.me
 #   Date: 3-13-21
 #   Meshtastic PyGUI
+#   Thank you to all the members of meshtastic that make this project possible
 #
 
 # ----- <Imports> ----- #
@@ -15,7 +16,6 @@ import subprocess
 import time
 from pubsub import pub
 from zipfile import ZipFile
-#from window_layout import make_win1API, make_win2FIRMWARE, make_win3
 
 # ----- </IMports> ----- #
 
@@ -29,9 +29,10 @@ menu_def = [['&File', ['&Properties', 'E&xit']],
 
 # ----- </Menu Definition> ----- #
 
+# ----- Window 1 ----- #
 def make_win1API():
     sg.theme('DarkAmber')
-    sg.set_options(element_padding=(0, 0))
+    sg.set_options(element_padding=(1, 1))
 
 
     layout = [
@@ -48,11 +49,14 @@ def make_win1API():
               [sg.Button('Set Lattitude'),sg.InputText(size=(10,1),key='-SETLAT-'), sg.Button('Set Longitude'), sg.InputText(size=(10,1),key='-SETLON-'),
               sg.Button('Set Altitude'), sg.InputText(size=(10,1),key='-SETALT-')],
               [sg.Button('Set Router'), sg.Button('Unset Router')],
+              [sg.Button('Factory Reset')],
               [sg.Button('Firmware Window'), sg.Button('Radio Window')],
               [sg.Button('Close')]
              ]
     return sg.Window('Meshtastic API', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
+# ----- /Window 1 ----- #
 
+# ----- Window 2 ----- #
 def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
     layout = [
                [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
@@ -66,34 +70,34 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                [sg.Text('The download just downloads the binary to a firmware.zip file in the local folder')],
                [sg.Text('and is extracted to a folder called firmware.')],
                [sg.Text('You can then browse to the needed binary in the firmware folder.')],
-               [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Cancel()],
-               [sg.Button('Close')]
+               [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Button('Erase Firmware')],
+               [sg.Button('Close'), sg.Cancel()]
               ]
     return sg.Window('Firmware Utility', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
+# ------ /Window 2 ------ #
+# ----- Radio I/O Window ----- #
 
-    # ----- Radio I/O Window ----- #
-
-def make_win3():  ##define Radio Window Layout and contents
+def make_win3RADIO():  ##define Radio Window Layout and contents
     layout = [
              [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
              [sg.Text('Radio I/O')],
              [sg.Output(size=(80,25),key='-OUTPUT_RADIO-')],
-             [sg.Button('Send Message'), sg.InputText(key='-MSGINPUT-')],
-             [sg.Button('Send to node'),sg.Text('Messgage use " " if spaces are in message'),sg.InputText(size=(10,1),key='-NODE_MSG-'),
+             [sg.Button('Send Message to all',key='Send Message'), sg.InputText(key='-MSGINPUT-')],
+             [sg.Button('Send to node'),sg.Text('message'),sg.InputText(size=(20,1),key='-NODE_MSG-'),
                 sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE-')],
              [sg.Button('Connect to Radio'), sg.Button('Close'),sg.Button('Close Radio Connection')]]
-    return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
+    return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True)
 
     # ----- /Radio I/O Window -----#
 
 
 # ----- Draw_Windows ----- #
 def main():
-    window1API, window2, window3 = make_win1API(), make_win2FIRMWARE(), make_win3()
+    window1API, windows2FIRMWARE, window3RADIO = make_win1API(), make_win2FIRMWARE(), make_win3RADIO()
 
-    window2.move(window1API.current_location()[0]+220, window1API.current_location()[1]+220)
+    windows2FIRMWARE.move(window1API.current_location()[0]-220, window1API.current_location()[1]+220)
 
-    window3.move(window1API.current_location()[0], window1API.current_location()[1]+420)
+    window3RADIO.move(window1API.current_location()[0]+620, window1API.current_location()[1]+20)
 # ----- /Draw_Windows ----- #
 
 
@@ -109,18 +113,18 @@ def main():
 
         if event == sg.WIN_CLOSED or event == 'Close':
             window.close()
-            if window == window2:       # if closing win 2, mark as closed
-                window2 = None
+            if window == windows2FIRMWARE:       # if closing win 2, mark as closed
+                windows2FIRMWARE = None
             elif window == window1API:     # if closing win 1, mark as closed
                 window1API = None
-            elif window == window3:
-                window3 = None
+            elif window == window3RADIO:
+                window3RADIO = None
 # ------ /Close Windows and programs ----- #
 
 # ----- Menu About ----- #
         elif event == 'About...':
             window.disappear()
-            sg.popup('About this program', 'Version 0.1.3',
+            sg.popup('About this program', 'Version 2.2.3',
                      'Meshtastic-PyGUI is a community based project,',
                      'More Info at https://www.meshtastic.org',
                      'Meshtastic version',meshtastic_version,
@@ -141,7 +145,7 @@ def main():
                 file_contents = f.read()
                 sg.popup(print(file_contents))
             except:
-                output_window = window3
+                output_window = window3RADIO
                 sg.popup('No Device Present')
 # ----- /Properties ----- #
 
@@ -149,36 +153,31 @@ def main():
 
             #os.system("devcon.exe hwids * >>hwid.txt")
             try:
-                output_window = window3
+                output_window = window3RADIO
                 meshtastic.SerialInterface().close(self)
             except:
-                output_window = window3
-                print('Error Closing Serial Connection')
+                output_window = window3RADIO
+                sg.popup('Error Closing Serial Connection')
 
 # ----- Open Firmware Window ----- #
         elif event == 'Firmware Window':
-            if not window2:
-                window2 = make_win2FIRMWARE()
-                window2.move(window1API.current_location()[0], window1API.current_location()[1] + 220)
+            if not windows2FIRMWARE:
+                windows2FIRMWARE = make_win2FIRMWARE()
+                windows2FIRMWARE.move(window1API.current_location()[0], window1API.current_location()[1] + 220)
 # ----- /Open firmware Window ----- #
 
 # ----- Open Radio I/O Window ----- #
         elif event == 'Radio Window':
-            if not window3:
-                window3 = make_win3()
-                window3.move(window1API.current_location()[0], window1API.current_location()[1] - 220)
+            if not window3RADIO:
+                window3RADIO = make_win3RADIO()
+                window3RADIO.move(window1API.current_location()[0], window1API.current_location()[1] - 220)
 # ----- /Open Radio I/O Window ----- #
 
-        elif event == '-IN-':
-            # output_window = window3
-            if output_window:           # if a valid window, then output to it
-                output_window['-OUTPUT-'].update(values['-IN-'])
-            else:
-                window['-OUTPUT-'].update('Other window is closed')
+
 # ----- Open COM connection to Radio ----- #
         elif event == 'Connect to Radio':
             try:
-                output_window = window3
+                output_window = window3RADIO
                 interface = meshtastic.SerialInterface()
                 def onReceive(packet, interface): # called when a packet arrives
                     print(f'Received: {packet}')
@@ -191,7 +190,7 @@ def main():
                 print(pub.subscribe(onConnection, 'meshtastic.connection.established'))
                 # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
             except:
-                output_window = window3
+                output_window = window3RADIO
                 print("Error connecting to radio")
 # ---- /Open COM connection to Radio ----- #
 
@@ -200,8 +199,8 @@ def main():
             try:
                 os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
             except:
-                output_window = window3
-                print('Error getting radio info')
+                output_window = window3RADIO
+                sg.popup('Error getting radio info')
 # ----- /Get Raadio info ---- #
 
 # ----- Send Message ----- #
@@ -209,19 +208,19 @@ def main():
             try:
                 os.system('meshtastic --sendtext '+ values['-MSGINPUT-'])
             except:
-                output_window = window3
-                print('Error sending message')
+                output_window = window3RADIO
+                sg.popup('Error sending message')
 # ----- /Send Message ----- #
 
         elif event == 'Send Message to node':
             try:
                 os.system('meshtastic --dest '+ values['-NODE-']+' --sendtext '+values['-NODE_MSG-'])
             except:
-                output_window = window3
-                print('Error sending message to '+values['-NODE-'])
+                output_window = window3RADIO
+                sg.popup('Error sending message to '+values['-NODE-'])
 # ----- Help ----- #
         elif event == 'Help':
-            output_window = window3
+            output_window = window3RADIO
              #if user clicks the help button
             os.system('meshtastic -h >help.txt')
             help_read = open('help.txt') #output meshtastic help via cmd prompt
@@ -233,7 +232,7 @@ def main():
             try:
                 os.system('meshtastic --qr >QR.tmp')
             except:
-                output_window = window3
+                output_window = window3RADIO
                 os.system('echo ERROR QR >>error.log')
 # ----- /QR ------ #
 
@@ -242,8 +241,8 @@ def main():
             try:
                 os.system('meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
             except:
-                output_window = window3
-                print('Error setting channel')
+                output_window = window3RADIO
+                sg.popup('Error setting channel')
                 os.system('echo ERROR Set Channel Event >>error.log')
 # ------ /Set Channel ----- #
 
@@ -252,8 +251,8 @@ def main():
             try:
                 os.system('meshtastic --seturl '+values['-URLINPUT-'])
             except:
-                output_window = window3
-                print('Error setting url')
+                output_window = window3RADIO
+                sg.popup('Error setting url')
                 os.system('echo ERROR Set URL error >>error.log')
 # ----- /Set URL ----- #
 
@@ -308,37 +307,7 @@ def main():
             firmwareID = 'NULL'
             firmwarRegion = 'NULL'
             binVersion = 'NULL'
-            try:
-                # ----- Board Selection ----- #
-                if values['-T-Beam-']:
-                    firmwareID = '-tbeam'
-                elif values['-heltec-']:
-                    firmwareID = '-heltec'
-                elif values['-T-LoRa-']:
-                    firmwareID = '-tlora'
-                elif values['-LoRa Relay-']:
-                    firmwareID = '-lora-relay'
-            except:
-                print('firmwareid error')
-                # ----- /Board Selection ----- #
 
-            try:
-                # ----- Region Selection ----- #
-                if values['-ANZ-']:
-                    firmwarRegion = '-ANZ'
-                elif values['-CN-']:
-                    firmwarRegion = '-CN'
-                elif values['-JP-']:
-                    firmwarRegion = '-JP'
-                elif values['-KR-']:
-                    firmwarRegion = '-KR'
-                elif values['-EU443-']:
-                    firmwarRegion = '-EU443'
-                elif values['-EU865-']:
-                    firmwarRegion = '-EU865'
-            except:
-                print('frimware region error')
-                # ---- /Region Selection ----- #
 
             try:
                 # ----- Firmware Downlaod URL----- #
@@ -353,7 +322,7 @@ def main():
                     hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
                     binVersion = hamURL+'20'+dateBuild+'.zip'
             except:
-                print('bin not pressent')
+                sg.popup('bin not pressent')
                 # ----- /Firmware Download URL ----- #
 
             try:
@@ -376,7 +345,13 @@ def main():
             try:
                 # User browses for the file the y need and the file chose is used as input for the flashing script
                 # script must be present in the parent folder in order for flash function to work
-                os.system('sh device-install.sh -f '+values['_FILES_'])
+                # os.system('sh device-install.sh -f '+values['_FILES_'])
+
+                os.system('esptool.py --baud 921600 erase_flash')
+                os.system('esptool.py --baud 921600 write_flash 0x1000 system-info.bin')
+                os.system('esptool.py --baud 921600 write_flash 0x00390000 spiffs-*.bin')
+                os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'])
+
             except:
                 os.system('echo ERROR Flash Firmware Event >>error.log')
         # ----- /Flash Firmware ----- #
@@ -386,23 +361,30 @@ def main():
             try:
                 # User browses for the file the y need and the file chose is used as input for the flashing script
                 # script must be present in the parent folder in order for flash function to work
-                os.system('sh device-update.sh -f '+values['_FILES_'])
+                # os.system('sh device-update.sh -f '+values['_FILES_'])
+                os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'] )
             except:
                 os.system('echo ERROR Firmware update Event >>error.log')
         # ----- /Update firmware ----- #
+
+        elif event == 'Erase Firmware':
+            try:
+                os.system('esptool.py --baud 921600 erase_flash')
+            except:
+                sg.popup('error erasing firmware')
 
         # ----- Set Wifi ----- #
         elif event == 'Set Wifi SSID':
             try:
                 os.system('meshtastic  --set wifi_ssid '+values['-WifiSSID-'])
             except:
-                print('error wifi ssid')
+                sg.popup('error wifi ssid')
 
         elif event == 'Set Wifi Password':
             try:
                 os.system('meshtastic  --set wifi_password '+values['-WifiPASS-'])
             except:
-                print('error wifi password')
+                sg.popup('error wifi password')
 
         # ----- /Set Wifi ---- #
 
@@ -412,7 +394,7 @@ def main():
             try:
                 os.system('meshtastic --set wifi_ap_mode true')
             except:
-                print('Error activating AP mode')
+                sg.popup('Error activating AP mode')
         # ----- /AP ON ----#
 
         # ----- AP off ----- #
@@ -421,8 +403,19 @@ def main():
             try:
                 os.system('meshtastic --set wifi_ap_mode false')
             except:
-                print('Error trying to turn AP off ')
-# end Loop
+                sg.popup('Error trying to turn AP o ff ')
+
+        # ----- /AP Off ----- #
+
+        # ----- Factory Reset ----- #
+        elif event == 'Factory Reset':
+            try:
+                os.system('meshtastic --set factory_reset true')
+            except:
+                sg.popup('Error Resetting Radio ')
+
+
+# end Loops
 
 if __name__ == '__main__':
     main()
