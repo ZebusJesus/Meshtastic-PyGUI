@@ -92,27 +92,26 @@ def make_win3RADIO():  ##define Radio Window Layout and contents
 
 # ----- Radio Option List Window ----- #
 def make_win4OPTIONS():
-    choices = ('position_broadcast_secs','send_owner_interval','wait_bluetooth_secs','screen_on_secs',
-    'phone_timeout_secs','phone_sds_timeout_sec','mesh_sds_timeout_secs','sds_secs',
-    'ls_secs','min_wake_secs','wifi_ssid','wifi_password','wifi_ap_mode','region',
-    'charge_current','is_router','is_low_power','fixed_position','factory_reset',
-    'debug_log_enabled','location_share','gps_operation','gps_update_interval',
-    'gps_attempt_time','ignore_incoming','serialplugin_enabled','serialplugin_echo',
-    'serialplugin_rxd','serialplugin_txd','serialplugin_timeout','serialplugin_mode',
-    'ext_notification_plugin_enabled','ext_notification_plugin_output_ms',
-    'ext_notification_plugin_output','ext_notification_plugin_active',
-    'ext_notification_plugin_alert_message','ext_notification_plugin_alert_bell',
-    'range_test_plugin_enabled','range_test_plugin_sender','range_test_plugin_save',
-    'store_forward_plugin_enabled','store_forward_plugin_records','environmental_measurement_plugin_measurement_enabled',
-    'environmental_measurement_plugin_screen_enabled','environmental_measurement_plugin_read_error_count_threshold',
-    'environmental_measurement_plugin_update_interval','environmental_measurement_plugin_recovery_interval',
-    'environmental_measurement_plugin_display_farenheit','environmental_measurement_plugin_sensor_type',
-    'environmental_measurement_plugin_sensor_pin')
 
     layout = [
                 [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
                 [sg.Text('What Setting do you want to change?')],
-                [sg.Listbox(choices, size=(80, 20), key='-OPTION-')],
+                [sg.Listbox(values=['position_broadcast_secs','send_owner_interval','wait_bluetooth_secs','screen_on_secs',
+                'phone_timeout_secs','phone_sds_timeout_sec','mesh_sds_timeout_secs','sds_secs',
+                'ls_secs','min_wake_secs','wifi_ssid','wifi_password','wifi_ap_mode','region',
+                'charge_current','is_router','is_low_power','fixed_position','factory_reset',
+                'debug_log_enabled','location_share','gps_operation','gps_update_interval',
+                'gps_attempt_time','ignore_incoming','serialplugin_enabled','serialplugin_echo',
+                'serialplugin_rxd','serialplugin_txd','serialplugin_timeout','serialplugin_mode',
+                'ext_notification_plugin_enabled','ext_notification_plugin_output_ms',
+                'ext_notification_plugin_output','ext_notification_plugin_active',
+                'ext_notification_plugin_alert_message','ext_notification_plugin_alert_bell',
+                'range_test_plugin_enabled','range_test_plugin_sender','range_test_plugin_save',
+                'store_forward_plugin_enabled','store_forward_plugin_records','environmental_measurement_plugin_measurement_enabled',
+                'environmental_measurement_plugin_screen_enabled','environmental_measurement_plugin_read_error_count_threshold',
+                'environmental_measurement_plugin_update_interval','environmental_measurement_plugin_recovery_interval',
+                'environmental_measurement_plugin_display_farenheit','environmental_measurement_plugin_sensor_type',
+                'environmental_measurement_plugin_sensor_pin'], size=(80, 20), key='-OPTION-')],
                 [sg.Button('Send Config --CAREFUL NOW--'),sg.InputText(size=(20,1),key='-SETVAL-')],
                 [sg.Button('Close')] ]
 
