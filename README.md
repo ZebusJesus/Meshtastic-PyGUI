@@ -18,6 +18,7 @@ Python Modules:
   subprocess
   time
   zipfile
+  esptool
 
 ## A note for developers of this tool
 
