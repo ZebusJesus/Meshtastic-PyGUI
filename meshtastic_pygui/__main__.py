@@ -24,7 +24,7 @@ from zipfile import ZipFile
 menu_def = [['&File', ['&Properties', 'E&xit']],
             ['&Edit', ['&Paste', ['Special', 'Normal', ], 'Undo'], ],
             ['&Toolbar', ['---', 'Firmware Window', 'Radio Window',
-                          '---', 'Command &3', 'Command &4']],
+                          '---', 'Options', 'Command &4']],
             ['&Help', '&About...'], ]
 
 # ----- </Menu Definition> ----- #
@@ -86,18 +86,49 @@ def make_win3RADIO():  ##define Radio Window Layout and contents
              [sg.Button('Send to node'),sg.Text('message'),sg.InputText(size=(20,1),key='-NODE_MSG-'),
                 sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE-')],
              [sg.Button('Connect to Radio'), sg.Button('Close'),sg.Button('Close Radio Connection')]]
-    return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True)
+    return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
 
     # ----- /Radio I/O Window -----#
+
+# ----- Radio Option List Window ----- #
+def make_win4OPTIONS():
+    choices = ('position_broadcast_secs','send_owner_interval','wait_bluetooth_secs','screen_on_secs',
+    'phone_timeout_secs','phone_sds_timeout_sec','mesh_sds_timeout_secs','sds_secs',
+    'ls_secs','min_wake_secs','wifi_ssid','wifi_password','wifi_ap_mode','region',
+    'charge_current','is_router','is_low_power','fixed_position','factory_reset',
+    'debug_log_enabled','location_share','gps_operation','gps_update_interval',
+    'gps_attempt_time','ignore_incoming','serialplugin_enabled','serialplugin_echo',
+    'serialplugin_rxd','serialplugin_txd','serialplugin_timeout','serialplugin_mode',
+    'ext_notification_plugin_enabled','ext_notification_plugin_output_ms',
+    'ext_notification_plugin_output','ext_notification_plugin_active',
+    'ext_notification_plugin_alert_message','ext_notification_plugin_alert_bell',
+    'range_test_plugin_enabled','range_test_plugin_sender','range_test_plugin_save',
+    'store_forward_plugin_enabled','store_forward_plugin_records','environmental_measurement_plugin_measurement_enabled',
+    'environmental_measurement_plugin_screen_enabled','environmental_measurement_plugin_read_error_count_threshold',
+    'environmental_measurement_plugin_update_interval','environmental_measurement_plugin_recovery_interval',
+    'environmental_measurement_plugin_display_farenheit','environmental_measurement_plugin_sensor_type',
+    'environmental_measurement_plugin_sensor_pin')
+
+    layout = [
+                [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
+                [sg.Text('What Setting do you want to change?')],
+                [sg.Listbox(choices, size=(80, 20), key='-OPTION-')],
+                [sg.Button('Send Config --CAREFUL NOW--'),sg.InputText(size=(20,1),key='-SETVAL-')],
+                [sg.Button('Close')] ]
+
+    return sg.Window('Pick a Setting', layout, finalize=True,no_titlebar=True,grab_anywhere=True)
+# ----- /Radio Option List Window ----- #
 
 
 # ----- Draw_Windows ----- #
 def window_event_loop():
-    window1API, windows2FIRMWARE, window3RADIO = make_win1API(), make_win2FIRMWARE(), make_win3RADIO()
+    window1API, windows2FIRMWARE, window3RADIO = make_win1API(), make_win2FIRMWARE(), make_win3RADIO(), #make_win4OPTIONS()
 
     windows2FIRMWARE.move(window1API.current_location()[0]-220, window1API.current_location()[1]+220)
 
     window3RADIO.move(window1API.current_location()[0]+620, window1API.current_location()[1]+20)
+
+    #window4OPTIONS.move(window1API.current_location()[0]+420, window1API.current_location()[1]+20)
 # ----- /Draw_Windows ----- #
 
 
@@ -119,17 +150,17 @@ def window_event_loop():
                 window1API = None
             elif window == window3RADIO:
                 window3RADIO = None
+            elif window == window4OPTIONS:
+                window4OPTIONS = None
+            elif window == window5SETTING:
+                window5SETTING = None
 # ------ /Close Windows and programs ----- #
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            window.disappear()
-            sg.popup('About this program', 'Version 2.2.3',
-                     'Meshtastic-PyGUI is a community based project,',
-                     'More Info at https://www.meshtastic.org',
-                     'Meshtastic version',meshtastic_version,
-                     'PySimpleGUI Version', sg.version,  grab_anywhere=True)
-            window.reappear()
+            sg.popup('version 2.5')
+
+
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
@@ -413,6 +444,29 @@ def window_event_loop():
                 os.system('meshtastic --set factory_reset true')
             except Exception:
                 sg.popup('Error Resetting Radio ')
+
+
+
+        elif event == 'Options':
+            window4OPTIONS = make_win4OPTIONS()
+
+        elif event == 'Send Config --CAREFUL NOW--':
+            output_window = window3RADIO
+            try:
+                if values['-OPTION-']:    # if something is highlighted in the list
+                    sg.popup(f" WARNING Command being sent: meshtastic --set {values['-OPTION-'][0]} {values['-SETVAL-']}",
+                    "WARNING Disconnect your radio now if you do not want this setting to be changed")
+                    set_option_var = values['-OPTION-'][0]
+                    set_option_val = values['-SETVAL-']
+                    print('meshtastic --set '+set_option_var+' '+set_option_val)
+                    try:
+                        os.system('meshtastic --set '+set_option_var+' '+set_option_val)
+                    except Exception:
+                        print('error connecting to radio')
+            except Exception:
+                print("error applying setting")
+
+
 
 
 # end Loops
