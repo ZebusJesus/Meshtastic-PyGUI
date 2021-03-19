@@ -1,7 +1,7 @@
 # ----- <About> ----- #
 #   Author: Zebus Zebus
 #   Email: zebusjesus@pm.me
-#   Date: 3-13-21
+#   Date: 3-18-21
 #   Meshtastic PyGUI
 #   Thank you to all the members of meshtastic that make this project possible
 #
@@ -50,7 +50,7 @@ def make_win1API():
               sg.Button('Set Altitude'), sg.InputText(size=(10,1),key='-SETALT-')],
               [sg.Button('Set Router'), sg.Button('Unset Router')],
               [sg.Button('Factory Reset')],
-              [sg.Button('Firmware Window'), sg.Button('Radio Window')],
+              [sg.Button('Firmware Window'), sg.Button('Radio Window'),sg.Button('Options')],
               [sg.Button('Close')]
              ]
     return sg.Window('Meshtastic API', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
@@ -66,10 +66,11 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                #[sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
                [sg.Checkbox('1.2.10',key='-1.2.10-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
-               [sg.Input(key='_FILES_'), sg.FilesBrowse()],
-               [sg.Text('The download just downloads the binary to a firmware.zip file in the local folder')],
-               [sg.Text('and is extracted to a folder called firmware.')],
+               [sg.Text('Firmware'),sg.Input(key='_FILES_'), sg.FilesBrowse()],
+               [sg.Text('spiff'),sg.Input(key='_FILES2_'), sg.FilesBrowse()],
+               [sg.Text('system-info'),sg.Input(key='_FILES3_'), sg.FilesBrowse()],
                [sg.Text('You can then browse to the needed binary in the firmware folder.')],
+               [sg.Text('Flashing Firmware requires you select a firmware, spiff and system-info file locations')],
                [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Button('Erase Firmware')],
                [sg.Button('Close'), sg.Cancel()]
               ]
@@ -82,7 +83,8 @@ def make_win3RADIO():  ##define Radio Window Layout and contents
              [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
              [sg.Text('Radio I/O')],
              [sg.Output(size=(80,25),key='-OUTPUT_RADIO-')],
-             [sg.Button('Send Message to all',key='Send Message'), sg.InputText(key='-MSGINPUT-')],
+             [sg.Button('Send Message to all',key='Send Message'), sg.InputText(key='-MSGINPUT-'),sg.Checkbox('AK MSK',key='-AKMSGTF-'),
+             sg.Checkbox('Want Response',key='-WNTRSPTF-')],
              [sg.Button('Send to node'),sg.Text('message'),sg.InputText(size=(20,1),key='-NODE_MSG-'),
                 sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE-')],
              [sg.Button('Connect to Radio'), sg.Button('Close'),sg.Button('Close Radio Connection')]]
@@ -121,7 +123,7 @@ def make_win4OPTIONS():
 
 # ----- Draw_Windows ----- #
 def window_event_loop():
-    window1API, windows2FIRMWARE, window3RADIO = make_win1API(), make_win2FIRMWARE(), make_win3RADIO(), #make_win4OPTIONS()
+    window1API, windows2FIRMWARE, window3RADIO = make_win1API(), make_win2FIRMWARE(), make_win3RADIO()
 
     windows2FIRMWARE.move(window1API.current_location()[0]-220, window1API.current_location()[1]+220)
 
@@ -151,13 +153,12 @@ def window_event_loop():
                 window3RADIO = None
             elif window == window4OPTIONS:
                 window4OPTIONS = None
-            elif window == window5SETTING:
-                window5SETTING = None
+
 # ------ /Close Windows and programs ----- #
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.5')
+            sg.popup('version 2.6')
 
 
 # ----- /Menu About ----- #
@@ -184,7 +185,9 @@ def window_event_loop():
             #os.system("devcon.exe hwids * >>hwid.txt")
             try:
                 output_window = window3RADIO
-                meshtastic.SerialInterface().close(self)
+                interface = meshtastic.SerialInterface()
+                interface.close()
+                print('closing connection to radio')
             except Exception:
                 output_window = window3RADIO
                 sg.popup('Error Closing Serial Connection')
@@ -235,8 +238,15 @@ def window_event_loop():
 
 # ----- Send Message ----- #
         elif event == 'Send Message': #if user clicks send message take input and send to radio
+
             try:
-                os.system('meshtastic --sendtext '+ values['-MSGINPUT-'])
+                interface = meshtastic.SerialInterface()
+                interface.sendText(values['-MSGINPUT-'],
+                 wantAck=values['-AKMSGTF-'],
+                 wantResponse=values['-WNTRSPTF-'],
+                 onResponse=None)
+                interface.close()
+                print(values['-AKMSGTF-'])
             except Exception:
                 output_window = window3RADIO
                 sg.popup('Error sending message')
@@ -345,6 +355,7 @@ def window_event_loop():
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.6/firmware-1.2.6.zip'
                 elif values['-1.2.10-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.10/firmware-1.2.10.zip'
+                    spiff = '1.2.10'
                 elif values['-1.1.50-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.50/firmware-1.1.50.zip'
                 elif values['-HN-']:
@@ -366,9 +377,13 @@ def window_event_loop():
                 with ZipFile('firmware.zip', 'r') as zipObj:
                     # Extract all the contents of zip file in current directory
                     zipObj.extractall(path='firmware')
+
+
+
+
                     #print(firmwareID+firmwarRegion)
             except Exception:
-                print(binVersion)
+                print('error extarcting bin')
 
         # ----- Flash Firmware ----- #
         elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
@@ -378,8 +393,8 @@ def window_event_loop():
                 # os.system('sh device-install.sh -f '+values['_FILES_'])
 
                 os.system('esptool.py --baud 921600 erase_flash')
-                os.system('esptool.py --baud 921600 write_flash 0x1000 system-info.bin')
-                os.system('esptool.py --baud 921600 write_flash 0x00390000 spiffs-*.bin')
+                os.system('esptool.py --baud 921600 write_flash 0x1000 '+values['_FILES3_'])
+                os.system('esptool.py --baud 921600 write_flash 0x00390000 '+values['_FILES2_'])
                 os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'])
 
             except Exception:
