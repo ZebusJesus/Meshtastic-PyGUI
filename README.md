@@ -21,11 +21,42 @@ Python Modules:
   esptool
 ```
 
+## Install Commands 
+```
+Windows:
+
+python -m pip install --upgrade meshtastic-pygui
+
+OSX
+
+pip3 install --upgrade meshtastic-pygui
+
+Linux 
+
+pip3 install --upgrade meshtastic-pygui
+```
+
+## Launch Command
+```
+Windows:
+
+python -m meshtastic_pygui
+
+MacOS:
+
+python3 -m meshtastic_pygui
+```
+
 ## A note for developers of this tool
 
 If you need to build a new release you'll need:
 ```
+Linux:
 sudo pip3 install markdown twine
+
+Windows 
+
+python -m pip install markdown twine 
 ```
 
 ```
