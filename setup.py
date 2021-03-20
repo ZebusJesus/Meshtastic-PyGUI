@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 # This call to setup() does all the work
 setup(
     name="meshtastic_PyGUI",
-    version="2.6",
+    version="2.6.2",
     description="A pre-alpha python GUI for meshtastic",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -27,7 +27,7 @@ setup(
     ],
     packages=["meshtastic_pygui"],
     include_package_data=True,
-    install_requires=["meshtastic>=1.2.10", "PySimpleGUI>=4.34.0","requests>=2.25.1","esptool>=3.0"],
+    install_requires=["meshtastic>=1.2.12", "PySimpleGUI>=4.34.0","requests>=2.25.1","esptool>=3.0"],
     extras_require={},
     python_requires='>=3.6',
     entry_points={

@@ -1,7 +1,7 @@
 # ----- <About> ----- #
 #   Author: Zebus Zebus
 #   Email: zebusjesus@pm.me
-#   Date: 3-18-21
+#   Date: 3-19-21
 #   Meshtastic PyGUI
 #   Thank you to all the members of meshtastic that make this project possible
 #
@@ -22,9 +22,9 @@ from zipfile import ZipFile
 # ------ <Menu_Definition> ------ #
 
 menu_def = [['&File', ['&Properties', 'E&xit']],
-            ['&Edit', ['&Paste', ['Special', 'Normal', ], 'Undo'], ],
+            ['GPS', ['Range Test', ['Download Range Data', 'Normal', ], 'Undo'], ],
             ['&Toolbar', ['---', 'Firmware Window', 'Radio Window',
-                          '---', 'Options', 'Command &4']],
+                          '---', 'Options', 'Nodes']],
             ['&Help', '&About...'], ]
 
 # ----- </Menu Definition> ----- #
@@ -50,7 +50,7 @@ def make_win1API():
               sg.Button('Set Altitude'), sg.InputText(size=(10,1),key='-SETALT-')],
               [sg.Button('Set Router'), sg.Button('Unset Router')],
               [sg.Button('Factory Reset')],
-              [sg.Button('Firmware Window'), sg.Button('Radio Window'),sg.Button('Options')],
+              [sg.Button('Firmware Window'), sg.Button('Radio Window'),sg.Button('Options'),sg.Button('Node Window')],
               [sg.Button('Close')]
              ]
     return sg.Window('Meshtastic API', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
@@ -63,7 +63,6 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                [sg.Text('Hardware and  Firmware build selection')],
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               #[sg.Checkbox('ANZ',key='-ANZ-'),sg.Checkbox('CN',key='-CN-'),sg.Checkbox('EU865',key='-EU865-'),sg.Checkbox('EU443',key='-EU443-'),sg.Checkbox('JP',key='-JP-'),sg.Checkbox('KR',key='-KR-'),sg.Checkbox('US',key='-US-')],
                [sg.Checkbox('1.2.10',key='-1.2.10-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Text('Firmware'),sg.Input(key='_FILES_'), sg.FilesBrowse()],
@@ -72,10 +71,13 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                [sg.Text('You can then browse to the needed binary in the firmware folder.')],
                [sg.Text('Flashing Firmware requires you select a firmware, spiff and system-info file locations')],
                [sg.Button('Flash Firmware'), sg.Button('Update Firmware'), sg.Button('Erase Firmware')],
+               [sg.Button('Backup Firmware'),sg.Input(key='_BACKUP_FILE_')],
+               [sg.Button('Restore Frimware'),sg.Input(key='_RESTORE_FILE_'),sg.FilesBrowse()],
                [sg.Button('Close'), sg.Cancel()]
               ]
     return sg.Window('Firmware Utility', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
 # ------ /Window 2 ------ #
+
 # ----- Radio I/O Window ----- #
 
 def make_win3RADIO():  ##define Radio Window Layout and contents
@@ -89,6 +91,22 @@ def make_win3RADIO():  ##define Radio Window Layout and contents
                 sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE-')],
              [sg.Button('Connect to Radio'), sg.Button('Close'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
+
+    # ----- /Radio I/O Window -----#
+
+def make_win5NODES():  ##define Radio Window Layout and contents
+    layout = [
+             [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
+             [sg.Text('Nodes')],
+             [sg.Output(size=(100,25),key='-OUTPUT_NODES-')],
+             [sg.Button('Nodes')],
+             [sg.Button('Send to node'),sg.Text('message'),sg.InputText(size=(20,1),key='-NODE_MSG-'),
+                sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE-')],
+             [sg.Button('Close Node Window')]
+             ]
+
+
+    return sg.Window('Nodes', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
 
     # ----- /Radio I/O Window -----#
 
@@ -123,7 +141,7 @@ def make_win4OPTIONS():
 
 # ----- Draw_Windows ----- #
 def window_event_loop():
-    window1API, windows2FIRMWARE, window3RADIO = make_win1API(), make_win2FIRMWARE(), make_win3RADIO()
+    window1API, windows2FIRMWARE, window3RADIO, window5NODES = make_win1API(), make_win2FIRMWARE(), make_win3RADIO(), make_win5NODES()
 
     windows2FIRMWARE.move(window1API.current_location()[0]-220, window1API.current_location()[1]+220)
 
@@ -153,14 +171,17 @@ def window_event_loop():
                 window3RADIO = None
             elif window == window4OPTIONS:
                 window4OPTIONS = None
+            elif window == window5NODES:
+                window5NODES = None
+
+        elif event == "Close Node Window":
+            window5NODES.close()
 
 # ------ /Close Windows and programs ----- #
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.6')
-
-
+            sg.popup('version 2.6.2')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
@@ -171,6 +192,7 @@ def window_event_loop():
 # ----- Properties ----- #
         elif event == 'Properties':
             try:
+                output_window = window3RADIO
                 os.system('meshtastic --info >radioinfo.txt')
                 f = open('radioinfo.txt', 'r')
                 file_contents = f.read()
@@ -224,7 +246,7 @@ def window_event_loop():
                 # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
             except Exception:
                 output_window = window3RADIO
-                print("Error connecting to radio")
+                sg.popup("Error connecting to radio")
 # ---- /Open COM connection to Radio ----- #
 
 # ----- Get Radio info ----- #
@@ -246,7 +268,6 @@ def window_event_loop():
                  wantResponse=values['-WNTRSPTF-'],
                  onResponse=None)
                 interface.close()
-                print(values['-AKMSGTF-'])
             except Exception:
                 output_window = window3RADIO
                 sg.popup('Error sending message')
@@ -347,8 +368,6 @@ def window_event_loop():
             firmwareID = 'NULL'
             firmwarRegion = 'NULL'
             binVersion = 'NULL'
-
-
             try:
                 # ----- Firmware Downlaod URL----- #
                 if values['-1.2.6-']:
@@ -365,7 +384,6 @@ def window_event_loop():
             except Exception:
                 sg.popup('bin not pressent')
                 # ----- /Firmware Download URL ----- #
-
             try:
                 # ----- Donload Firmware File to zip ----- #
                 url = binVersion
@@ -377,26 +395,16 @@ def window_event_loop():
                 with ZipFile('firmware.zip', 'r') as zipObj:
                     # Extract all the contents of zip file in current directory
                     zipObj.extractall(path='firmware')
-
-
-
-
-                    #print(firmwareID+firmwarRegion)
             except Exception:
                 print('error extarcting bin')
 
         # ----- Flash Firmware ----- #
         elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
             try:
-                # User browses for the file the y need and the file chose is used as input for the flashing script
-                # script must be present in the parent folder in order for flash function to work
-                # os.system('sh device-install.sh -f '+values['_FILES_'])
-
                 os.system('esptool.py --baud 921600 erase_flash')
                 os.system('esptool.py --baud 921600 write_flash 0x1000 '+values['_FILES3_'])
                 os.system('esptool.py --baud 921600 write_flash 0x00390000 '+values['_FILES2_'])
                 os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'])
-
             except Exception:
                 os.system('echo ERROR Flash Firmware Event >>error.log')
         # ----- /Flash Firmware ----- #
@@ -412,12 +420,33 @@ def window_event_loop():
                 os.system('echo ERROR Firmware update Event >>error.log')
         # ----- /Update firmware ----- #
 
+        # ----- Erase Firmware ----- #
         elif event == 'Erase Firmware':
             try:
                 os.system('esptool.py --baud 921600 erase_flash')
             except Exception:
                 sg.popup('error erasing firmware')
+        # ----- /Erase Firmware ----- #
 
+        # ----- Backup Firmware ----- #
+        elif event == 'Backup Firmware':
+            try:
+                os.system('python -m esptool --baud 921600 read_flash 0x00000 0x400000 '+values['_BACKUP_FILE_'])
+            except Exception:
+                output_window = window3RADIO
+                print('error backing up firmware')
+                sg.popup('Error backing up firmware')
+        # ----- /Backup Firmware ----- #
+
+        # ----- Restore Friimware ---- #
+
+        elif event == 'Restore Firmware':
+            try:
+                os.system('python -m esptool --baud 921600 write_flash --flas_freq 80m 0x000000 '+values['_RESTORE_FILE_'])
+            except Exception:
+                output_window = window3RADIO
+                print('error restoring backup firmware')
+                sg.popup('Error restoring firmware')
         # ----- Set Wifi ----- #
         elif event == 'Set Wifi SSID':
             try:
@@ -460,7 +489,7 @@ def window_event_loop():
                 sg.popup('Error Resetting Radio ')
 
 
-
+# ----- <Option WIndow> ----- #
         elif event == 'Options':
             window4OPTIONS = make_win4OPTIONS()
 
@@ -479,9 +508,29 @@ def window_event_loop():
                         print('error connecting to radio')
             except Exception:
                 print("error applying setting")
+# -----</Options Window> ------ #
+
+        elif event == 'Nodes':
+            try:
+                output_window = window5NODES
+                os.system('meshtastic --nodes>nodes.txt')
+                n = open('nodes.txt', 'r')
+                file_contents = n.read()
+                print(file_contents)
+            except Exception:
+                print('error listing nodes')
+
+        elif event == 'Node Window':
+            window5NODES = make_win5NODES()
 
 
-
+        elif event == 'Download Range Data':
+            try:
+                rangetest = requests.get('http://192.168.42.1/static/rangetest.csv')
+                open('rangetest1.csv', 'wb').write(rangetest.content)
+            except Exception:
+                rangetest = requests.get('http://mestastic/static/rangetest.csv')
+                open('rangetest1.csv', 'wb').write(rangetest.content)
 
 # end Loops
 
