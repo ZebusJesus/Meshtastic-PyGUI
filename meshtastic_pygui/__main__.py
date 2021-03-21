@@ -140,7 +140,7 @@ def make_win4OPTIONS():
 
 
 # ----- Draw_Windows ----- #
-def window_event_loop():
+def main():
     window1API, windows2FIRMWARE, window3RADIO, window5NODES = make_win1API(), make_win2FIRMWARE(), make_win3RADIO(), make_win5NODES()
 
     windows2FIRMWARE.move(window1API.current_location()[0]-220, window1API.current_location()[1]+220)
@@ -535,4 +535,4 @@ def window_event_loop():
 # end Loops
 
 if __name__ == '__main__':
-    window_event_loop()
+    main()
