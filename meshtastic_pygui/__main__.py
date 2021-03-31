@@ -1,7 +1,7 @@
 # ----- <About> ----- #
 #   Author: Zebus Zebus
 #   Email: zebusjesus@pm.me
-#   Date: 3-19-21
+#   Date: 3-30-21
 #   Meshtastic PyGUI
 #   Thank you to all the members of meshtastic that make this project possible
 #
@@ -63,7 +63,7 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                [sg.Text('Hardware and  Firmware build selection')],
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               [sg.Checkbox('1.2.10',key='-1.2.10-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               [sg.Checkbox('1.2.17',key='-1.2.17-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Text('Firmware'),sg.Input(key='_FILES_'), sg.FilesBrowse()],
                [sg.Text('spiff'),sg.Input(key='_FILES2_'), sg.FilesBrowse()],
@@ -181,7 +181,7 @@ def main():
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.6.2')
+            sg.popup('version 2.6.4')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
@@ -372,8 +372,8 @@ def main():
                 # ----- Firmware Downlaod URL----- #
                 if values['-1.2.6-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.6/firmware-1.2.6.zip'
-                elif values['-1.2.10-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.10/firmware-1.2.10.zip'
+                elif values['-1.2.17-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.17/firmware-1.2.17.zip'
                     spiff = '1.2.10'
                 elif values['-1.1.50-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.50/firmware-1.1.50.zip'
@@ -396,7 +396,9 @@ def main():
                     # Extract all the contents of zip file in current directory
                     zipObj.extractall(path='firmware')
             except Exception:
-                print('error extarcting bin')
+                sg.popup('error exctracting bin')
+                os.system('echo exrror extracting bin >>error.log')
+                #print('error extarcting bin')
 
         # ----- Flash Firmware ----- #
         elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
@@ -406,6 +408,7 @@ def main():
                 os.system('esptool.py --baud 921600 write_flash 0x00390000 '+values['_FILES2_'])
                 os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'])
             except Exception:
+                sg.popup('Flash Error')
                 os.system('echo ERROR Flash Firmware Event >>error.log')
         # ----- /Flash Firmware ----- #
 
@@ -417,6 +420,7 @@ def main():
                 # os.system('sh device-update.sh -f '+values['_FILES_'])
                 os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'] )
             except Exception:
+                sg.popup('Firmware update error')
                 os.system('echo ERROR Firmware update Event >>error.log')
         # ----- /Update firmware ----- #
 
@@ -425,7 +429,8 @@ def main():
             try:
                 os.system('esptool.py --baud 921600 erase_flash')
             except Exception:
-                sg.popup('error erasing firmware')
+                sg.popup(' Erase Flash Error')
+                os.system('echo ERROR Erasing Flash Firmware Event >>error.log')
         # ----- /Erase Firmware ----- #
 
         # ----- Backup Firmware ----- #
@@ -433,9 +438,8 @@ def main():
             try:
                 os.system('python -m esptool --baud 921600 read_flash 0x00000 0x400000 '+values['_BACKUP_FILE_'])
             except Exception:
-                output_window = window3RADIO
-                print('error backing up firmware')
-                sg.popup('Error backing up firmware')
+                sg.popup('Backup Error')
+                os.system('echo ERROR Backup Firmware Event >>error.log')
         # ----- /Backup Firmware ----- #
 
         # ----- Restore Friimware ---- #
@@ -445,20 +449,22 @@ def main():
                 os.system('python -m esptool --baud 921600 write_flash --flas_freq 80m 0x000000 '+values['_RESTORE_FILE_'])
             except Exception:
                 output_window = window3RADIO
-                print('error restoring backup firmware')
-                sg.popup('Error restoring firmware')
+                sg.popup('Restore Flash Error')
+                os.system('echo ERROR Restore Flash Firmware Event >>error.log')
         # ----- Set Wifi ----- #
         elif event == 'Set Wifi SSID':
             try:
                 os.system('meshtastic  --set wifi_ssid '+values['-WifiSSID-'])
             except Exception:
-                sg.popup('error wifi ssid')
+                sg.popup('Wifi Setting Error')
+                os.system('echo ERROR setting SSID >>error.log')
 
         elif event == 'Set Wifi Password':
             try:
                 os.system('meshtastic  --set wifi_password '+values['-WifiPASS-'])
             except Exception:
-                sg.popup('error wifi password')
+                sg.popup('Wifi Password Error')
+                os.system('echo ERROR setting wifi password e Event >>error.log')
 
         # ----- /Set Wifi ---- #
 
@@ -469,6 +475,7 @@ def main():
                 os.system('meshtastic --set wifi_ap_mode true')
             except Exception:
                 sg.popup('Error activating AP mode')
+                os.system('echo ERROR setting AP on Event >>error.log')
         # ----- /AP ON ----#
 
         # ----- AP off ----- #
