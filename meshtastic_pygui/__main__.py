@@ -100,8 +100,10 @@ def make_win5NODES():  ##define Radio Window Layout and contents
              [sg.Text('Nodes')],
              [sg.Output(size=(100,25),key='-OUTPUT_NODES-')],
              [sg.Button('Nodes')],
-             [sg.Button('Send to node'),sg.Text('message'),sg.InputText(size=(20,1),key='-NODE_MSG-'),
+             [sg.Button('Send Message to node'),sg.Text('message'),sg.InputText(size=(20,1),key='-NODE_MSG-'),
                 sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE-')],
+             [sg.Button('Send Command to node'),sg.Text('command'),sg.InputText(size=(20,1),key='-NODE_CMD-'),
+               sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE1-')],
              [sg.Button('Close Node Window')]
              ]
 
@@ -147,7 +149,10 @@ def main():
 
     window3RADIO.move(window1API.current_location()[0]+620, window1API.current_location()[1]+20)
 
+    output_window = window3RADIO
+
     #window4OPTIONS.move(window1API.current_location()[0]+420, window1API.current_location()[1]+20)
+
 # ----- /Draw_Windows ----- #
 
 
@@ -181,7 +186,7 @@ def main():
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.6.4')
+            sg.popup('version 2.6.5')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
@@ -279,6 +284,18 @@ def main():
             except Exception:
                 output_window = window3RADIO
                 sg.popup('Error sending message to '+values['-NODE-'])
+
+# ----- Send Command ----- #
+
+        elif event == 'Send Command to node':
+            try:
+                os.system('meshtastic --dest '+ values['-NODE1-']+' '+values['-NODE_CMD-'] )
+            except Exception:
+                output_window = window3RADIO
+                sg.popup('Error sending command to '+values['-NODE1-'])
+
+# ----- /Send Command ----- #
+
 # ----- Help ----- #
         elif event == 'Help':
             output_window = window3RADIO
