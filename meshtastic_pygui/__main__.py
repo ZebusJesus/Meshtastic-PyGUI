@@ -16,13 +16,14 @@ import subprocess
 import time
 from pubsub import pub
 from zipfile import ZipFile
+from map3 import mapNODE
 
 # ----- </IMports> ----- #
 
 # ------ <Menu_Definition> ------ #
 
 menu_def = [['&File', ['&Properties', 'E&xit']],
-            ['GPS', ['Range Test', ['Download Range Data', 'Normal', ], 'Undo'], ],
+            ['GPS', ['Range Test', ['Download Range Data', 'Normal', ], 'View Map'], ],
             ['&Toolbar', ['---', 'Firmware Window', 'Radio Window',
                           '---', 'Options', 'Nodes']],
             ['&Help', '&About...'], ]
@@ -37,7 +38,7 @@ def make_win1API():
 
     layout = [
               [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
-              [sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOUR RUN')],
+              [sg.Text('Welcome to the Meshtastic Python GUI!!  WARNING I AM NOT RESPONSIBLE FOR ERRORS OR BROKEN DEVICES, LOOK BEFORE YOU RUN')],
               [sg.Button('Radio Information'), sg.Button('Help'), sg.Button('QR')],
               [sg.Button('Set Channel Settings'), sg.Text('SF'), sg.InputText(size=(10,1),key='-SFINPUT-'), sg.Text('CR'), sg.InputText(size=(10,1),key='-CRINPUT-'),
               sg.Text('BW'), sg.InputText(size=(10,1),key='-BWINPUT-')],
@@ -53,17 +54,20 @@ def make_win1API():
               [sg.Button('Firmware Window'), sg.Button('Radio Window'),sg.Button('Options'),sg.Button('Node Window')],
               [sg.Button('Close')]
              ]
+
     return sg.Window('Meshtastic API', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
 # ----- /Window 1 ----- #
 
 # ----- Window 2 ----- #
 def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
+    sg.theme('DarkAmber')
+    sg.set_options(element_padding=(1, 1))
     layout = [
                [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
                [sg.Text('Hardware and  Firmware build selection')],
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               [sg.Checkbox('1.2.17',key='-1.2.17-'), sg.Checkbox('1.2.6',key='-1.2.6-'), sg.Checkbox('1.1.50',key='-1.1.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               [sg.Checkbox('1.2.23',key='-1.2.23-'), sg.Checkbox('1.2.25',key='-1.2.25-'), sg.Checkbox('1.2.28',key='-1.2.28-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Text('Firmware'),sg.Input(key='_FILES_'), sg.FilesBrowse()],
                [sg.Text('spiff'),sg.Input(key='_FILES2_'), sg.FilesBrowse()],
@@ -81,6 +85,9 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
 # ----- Radio I/O Window ----- #
 
 def make_win3RADIO():  ##define Radio Window Layout and contents
+
+    sg.theme('DarkAmber')
+    sg.set_options(element_padding=(1, 1))
     layout = [
              [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
              [sg.Text('Radio I/O')],
@@ -89,12 +96,16 @@ def make_win3RADIO():  ##define Radio Window Layout and contents
              sg.Checkbox('Want Response',key='-WNTRSPTF-')],
              [sg.Button('Send to node'),sg.Text('message'),sg.InputText(size=(20,1),key='-NODE_MSG-'),
                 sg.Text('Node'),sg.InputText(size=(10,1),key='-NODE-')],
-             [sg.Button('Connect to Radio'), sg.Button('Close'),sg.Button('Close Radio Connection')]]
+             [sg.Button('Connect to Radio'), sg.Button('Close Radio Window'),sg.Button('Close Radio Connection')]]
     return sg.Window('Radio I/O', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
 
-    # ----- /Radio I/O Window -----#
+# ----- /Radio I/O Window -----#
 
+# ---- Nodes Window ----- #
 def make_win5NODES():  ##define Radio Window Layout and contents
+
+    sg.theme('DarkAmber')
+    sg.set_options(element_padding=(1, 1))
     layout = [
              [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
              [sg.Text('Nodes')],
@@ -107,14 +118,14 @@ def make_win5NODES():  ##define Radio Window Layout and contents
              [sg.Button('Close Node Window')]
              ]
 
-
     return sg.Window('Nodes', layout, finalize=True, no_titlebar=True, grab_anywhere=True)
-
-    # ----- /Radio I/O Window -----#
+# ----- /Nodes Window ----- ##
 
 # ----- Radio Option List Window ----- #
 def make_win4OPTIONS():
 
+    sg.theme('DarkAmber')
+    sg.set_options(element_padding=(1, 1))
     layout = [
                 [sg.Menu(menu_def, tearoff=False, pad=(200, 1))],
                 [sg.Text('What Setting do you want to change?')],
@@ -134,6 +145,7 @@ def make_win4OPTIONS():
                 'environmental_measurement_plugin_update_interval','environmental_measurement_plugin_recovery_interval',
                 'environmental_measurement_plugin_display_farenheit','environmental_measurement_plugin_sensor_type',
                 'environmental_measurement_plugin_sensor_pin'], size=(80, 20), key='-OPTION-')],
+                [sg.Checkbox('Port Config'),sg.InputText(size=(20,1),key='-SETPORT-')],
                 [sg.Button('Send Config --CAREFUL NOW--'),sg.InputText(size=(20,1),key='-SETVAL-')],
                 [sg.Button('Close')] ]
 
@@ -143,7 +155,7 @@ def make_win4OPTIONS():
 
 # ----- Draw_Windows ----- #
 def main():
-    window1API, windows2FIRMWARE, window3RADIO, window5NODES = make_win1API(), make_win2FIRMWARE(), make_win3RADIO(), make_win5NODES()
+    window5NODES, windows2FIRMWARE, window3RADIO, window1API = make_win5NODES(), make_win2FIRMWARE(), make_win3RADIO(), make_win1API()
 
     windows2FIRMWARE.move(window1API.current_location()[0]-220, window1API.current_location()[1]+220)
 
@@ -182,11 +194,14 @@ def main():
         elif event == "Close Node Window":
             window5NODES.close()
 
+        elif event == "Close Radio Window":
+            window3RADIO.close()
+
 # ------ /Close Windows and programs ----- #
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.6.5')
+            sg.popup('version 2.6.7')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
@@ -203,7 +218,6 @@ def main():
                 file_contents = f.read()
                 sg.popup(print(file_contents))
             except Exception:
-                output_window = window3RADIO
                 sg.popup('No Device Present')
 # ----- /Properties ----- #
 
@@ -216,7 +230,6 @@ def main():
                 interface.close()
                 print('closing connection to radio')
             except Exception:
-                output_window = window3RADIO
                 sg.popup('Error Closing Serial Connection')
 
 # ----- Open Firmware Window ----- #
@@ -250,7 +263,6 @@ def main():
                 print(pub.subscribe(onConnection, 'meshtastic.connection.established'))
                 # By default will try to find a meshtastic device, otherwise provide a device path like /dev/ttyUSB0
             except Exception:
-                output_window = window3RADIO
                 sg.popup("Error connecting to radio")
 # ---- /Open COM connection to Radio ----- #
 
@@ -259,7 +271,6 @@ def main():
             try:
                 os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
             except Exception:
-                output_window = window3RADIO
                 sg.popup('Error getting radio info')
 # ----- /Get Raadio info ---- #
 
@@ -282,7 +293,6 @@ def main():
             try:
                 os.system('meshtastic --dest '+ values['-NODE-']+' --sendtext '+values['-NODE_MSG-'])
             except Exception:
-                output_window = window3RADIO
                 sg.popup('Error sending message to '+values['-NODE-'])
 
 # ----- Send Command ----- #
@@ -291,7 +301,6 @@ def main():
             try:
                 os.system('meshtastic --dest '+ values['-NODE1-']+' '+values['-NODE_CMD-'] )
             except Exception:
-                output_window = window3RADIO
                 sg.popup('Error sending command to '+values['-NODE1-'])
 
 # ----- /Send Command ----- #
@@ -310,7 +319,6 @@ def main():
             try:
                 os.system('meshtastic --qr >QR.tmp')
             except Exception:
-                output_window = window3RADIO
                 os.system('echo ERROR QR >>error.log')
 # ----- /QR ------ #
 
@@ -319,7 +327,6 @@ def main():
             try:
                 os.system('meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
             except Exception:
-                output_window = window3RADIO
                 sg.popup('Error setting channel')
                 os.system('echo ERROR Set Channel Event >>error.log')
 # ------ /Set Channel ----- #
@@ -329,7 +336,6 @@ def main():
             try:
                 os.system('meshtastic --seturl '+values['-URLINPUT-'])
             except Exception:
-                output_window = window3RADIO
                 sg.popup('Error setting url')
                 os.system('echo ERROR Set URL error >>error.log')
 # ----- /Set URL ----- #
@@ -339,6 +345,7 @@ def main():
             try:
                 os.system('meshtastic --setch-longslow')
             except Exception:
+                sg.popup('Error')
                 os.system('echo ERROR Set Channel LongSlow >>error.log')
 # ------ /Set Long Slow ----- #
 
@@ -347,27 +354,40 @@ def main():
             try:
                 os.system('meshtastic --setch-shortfast')
             except Exception:
+                sg.popup('Error')
                 os.system('echo ERROR Set Channel ShortFast >>error.log')
 # ----- /Set Shor Fast ----- #
 
 # ----- Set Owner ----- #
         elif event == 'Set Owner':
-            os.system('meshtastic --setowner '+values['-OWNERINPUT-'])
+            try:
+                os.system('meshtastic --setowner '+values['-OWNERINPUT-'])
+            except Exception:
+                sg.popup('Error')
 # ----- /Set Owner ----- #
 
 # ----- Set Lattitude -----#
         elif event == 'Set Lattitude':
-            os.system('meshtastic --setlat '+values['-SETLAT-'])
+            try:
+                os.system('meshtastic --setlat '+values['-SETLAT-'])
+            except Exception:
+                sg.popup('Error')
 # ----- /Set Lattitude ----- #
 
 # ----- Set Longitude ----- #
         elif event == 'Set Longitude':
-            os.system('meshtastic --setlon '+values['-SETLON-'])
+            try:
+                os.system('meshtastic --setlon '+values['-SETLON-'])
+            except Exception:
+                sg.popup('Error')
 # ----- /Set Longitude ----- #
 
 # ----- Set Altitude ----- #
         elif event == 'Set Altitude':
-            os.system('meshtastic --setalt '+values['-SETALT-'])
+            try:
+                os.system('meshtastic --setalt '+values['-SETALT-'])
+            except Exception:
+                sg.popup('Error')
 # -----/ Set Altitude ----- #
 
 # ----- Set Router ----- #
@@ -387,13 +407,12 @@ def main():
             binVersion = 'NULL'
             try:
                 # ----- Firmware Downlaod URL----- #
-                if values['-1.2.6-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.6/firmware-1.2.6.zip'
-                elif values['-1.2.17-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.17/firmware-1.2.17.zip'
-                    spiff = '1.2.10'
-                elif values['-1.1.50-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.1.50/firmware-1.1.50.zip'
+                if values['-1.2.28-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.28/firmware-1.2.28.zip'
+                elif values['-1.2.25-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.25/firmware-1.2.25.zip'
+                elif values['-1.2.23-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.23/firmware-1.2.23.zip'
                 elif values['-HN-']:
                     dateBuild = (time.strftime("%y-%m-%d"))
                     hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
@@ -468,6 +487,8 @@ def main():
                 output_window = window3RADIO
                 sg.popup('Restore Flash Error')
                 os.system('echo ERROR Restore Flash Firmware Event >>error.log')
+        # ----- /Restore Firmware ----- #
+
         # ----- Set Wifi ----- #
         elif event == 'Set Wifi SSID':
             try:
@@ -521,13 +542,14 @@ def main():
             output_window = window3RADIO
             try:
                 if values['-OPTION-']:    # if something is highlighted in the list
-                    sg.popup(f" WARNING Command being sent: meshtastic --set {values['-OPTION-'][0]} {values['-SETVAL-']}",
+                    sg.popup(f" WARNING Command being sent: meshtastic --port {values['-SETPORT-']} --set {values['-OPTION-'][0]} {values['-SETVAL-']}",
                     "WARNING Disconnect your radio now if you do not want this setting to be changed")
                     set_option_var = values['-OPTION-'][0]
                     set_option_val = values['-SETVAL-']
-                    print('meshtastic --set '+set_option_var+' '+set_option_val)
+                    set_option_port = values['-SETPORT-']
+                    print('meshtastic --port '+set_option_port+' --set '+set_option_var+' '+set_option_val)
                     try:
-                        os.system('meshtastic --set '+set_option_var+' '+set_option_val)
+                        os.system('meshtastic --port '+set_option_port+' --set '+set_option_var+' '+set_option_val)
                     except Exception:
                         print('error connecting to radio')
             except Exception:
@@ -536,8 +558,7 @@ def main():
 
         elif event == 'Nodes':
             try:
-                output_window = window5NODES
-                os.system('meshtastic --nodes>nodes.txt')
+                os.system('python -m meshtastic --nodes')
                 n = open('nodes.txt', 'r')
                 file_contents = n.read()
                 print(file_contents)
@@ -553,9 +574,13 @@ def main():
                 rangetest = requests.get('http://192.168.42.1/static/rangetest.csv')
                 open('rangetest1.csv', 'wb').write(rangetest.content)
             except Exception:
-                rangetest = requests.get('http://mestastic/static/rangetest.csv')
-                open('rangetest1.csv', 'wb').write(rangetest.content)
+                sg.popup('Error downloading range test data')
 
+        elif event == 'View Map':
+            try:
+                mapNODE()
+            except Exception:
+                sg.popup('Error view map')
 # end Loops
 
 if __name__ == '__main__':
