@@ -16,7 +16,7 @@ import subprocess
 import time
 from pubsub import pub
 from zipfile import ZipFile
-from map3 import mapNODE
+#from map3 import mapNODE
 
 # ----- </IMports> ----- #
 
@@ -201,7 +201,7 @@ def main():
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.6.7')
+            sg.popup('version 2.6.9')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
