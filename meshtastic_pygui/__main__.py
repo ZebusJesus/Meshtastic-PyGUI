@@ -1,7 +1,7 @@
 # ----- <About> ----- #
 #   Author: Zebus Zebus
 #   Email: zebusjesus@pm.me
-#   Date: 3-30-21
+#   Date: 7-11-21
 #   Meshtastic PyGUI
 #   Thank you to all the members of meshtastic that make this project possible
 #
@@ -23,7 +23,7 @@ from zipfile import ZipFile
 # ------ <Menu_Definition> ------ #
 
 menu_def = [['&File', ['&Properties', 'E&xit']],
-            ['GPS', ['Range Test', ['Download Range Data', 'Normal', ], 'View Map'], ],
+            ['GPS', ['Range Test', ['Download Range Data', 'Normal', ], 'Future Function'], ],
             ['&Toolbar', ['---', 'Firmware Window', 'Radio Window',
                           '---', 'Options', 'Nodes']],
             ['&Help', '&About...'], ]
@@ -67,7 +67,7 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                [sg.Text('Hardware and  Firmware build selection')],
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               [sg.Checkbox('1.2.23',key='-1.2.23-'), sg.Checkbox('1.2.25',key='-1.2.25-'), sg.Checkbox('1.2.28',key='-1.2.28-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               [sg.Checkbox('1.2.42',key='-1.2.42-'), sg.Checkbox('1.2.38',key='-1.2.38-'), sg.Checkbox('1.2.28',key='-1.2.28-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Text('Firmware'),sg.Input(key='_FILES_'), sg.FilesBrowse()],
                [sg.Text('spiff'),sg.Input(key='_FILES2_'), sg.FilesBrowse()],
@@ -409,10 +409,10 @@ def main():
                 # ----- Firmware Downlaod URL----- #
                 if values['-1.2.28-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.28/firmware-1.2.28.zip'
-                elif values['-1.2.25-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.25/firmware-1.2.25.zip'
-                elif values['-1.2.23-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.23/firmware-1.2.23.zip'
+                elif values['-1.2.38-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.38.cf4e508/firmware-1.2.38.cf4e508.zip'
+                elif values['-1.2.42-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.42.2759c8d/firmware-1.2.42.2759c8d.zip'
                 elif values['-HN-']:
                     dateBuild = (time.strftime("%y-%m-%d"))
                     hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
@@ -575,12 +575,6 @@ def main():
                 open('rangetest1.csv', 'wb').write(rangetest.content)
             except Exception:
                 sg.popup('Error downloading range test data')
-
-        elif event == 'View Map':
-            try:
-                mapNODE()
-            except Exception:
-                sg.popup('Error view map')
 # end Loops
 
 if __name__ == '__main__':
