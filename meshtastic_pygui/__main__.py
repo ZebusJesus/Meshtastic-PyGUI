@@ -1,7 +1,7 @@
 # ----- <About> ----- #
 #   Author: Zebus Zebus
 #   Email: zebusjesus@pm.me
-#   Date: 7-11-21
+#   Date: 7-21-21
 #   Meshtastic PyGUI
 #   Thank you to all the members of meshtastic that make this project possible
 #
@@ -201,7 +201,7 @@ def main():
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.6.9')
+            sg.popup('version 2.7.2')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
@@ -213,7 +213,7 @@ def main():
         elif event == 'Properties':
             try:
                 output_window = window3RADIO
-                os.system('meshtastic --info >radioinfo.txt')
+                os.system('python -m meshtastic --info >radioinfo.txt')
                 f = open('radioinfo.txt', 'r')
                 file_contents = f.read()
                 sg.popup(print(file_contents))
@@ -269,7 +269,7 @@ def main():
 # ----- Get Radio info ----- #
         elif event == 'Radio Information': #if user clicks Radio Information
             try:
-                os.system('meshtastic --info >radioinfo.txt') # outout radio information to txt file
+                os.system('python -m meshtastic --info >radioinfo.txt') # outout radio information to txt file
             except Exception:
                 sg.popup('Error getting radio info')
 # ----- /Get Raadio info ---- #
@@ -291,7 +291,7 @@ def main():
 
         elif event == 'Send Message to node':
             try:
-                os.system('meshtastic --dest '+ values['-NODE-']+' --sendtext '+values['-NODE_MSG-'])
+                os.system('python -m meshtastic --dest '+ values['-NODE-']+' --sendtext '+values['-NODE_MSG-'])
             except Exception:
                 sg.popup('Error sending message to '+values['-NODE-'])
 
@@ -299,7 +299,7 @@ def main():
 
         elif event == 'Send Command to node':
             try:
-                os.system('meshtastic --dest '+ values['-NODE1-']+' '+values['-NODE_CMD-'] )
+                os.system('python -m meshtastic --dest '+ values['-NODE1-']+' '+values['-NODE_CMD-'] )
             except Exception:
                 sg.popup('Error sending command to '+values['-NODE1-'])
 
@@ -309,7 +309,7 @@ def main():
         elif event == 'Help':
             output_window = window3RADIO
              #if user clicks the help button
-            os.system('meshtastic -h >help.txt')
+            os.system('python -m meshtastic -h >help.txt')
             help_read = open('help.txt') #output meshtastic help via cmd prompt
             rh= help_read.read()
             print(rh)
@@ -317,7 +317,7 @@ def main():
 # ----- QR ----- #
         elif event == 'QR':#if user clicks QR button
             try:
-                os.system('meshtastic --qr >QR.tmp')
+                os.system('python -m meshtastic --qr >QR.tmp')
             except Exception:
                 os.system('echo ERROR QR >>error.log')
 # ----- /QR ------ #
@@ -325,7 +325,7 @@ def main():
 # ------ Set Channel -----#
         elif event == 'Set Channel': #if user clicks Set Channel button
             try:
-                os.system('meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
+                os.system('python -m meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
             except Exception:
                 sg.popup('Error setting channel')
                 os.system('echo ERROR Set Channel Event >>error.log')
@@ -334,7 +334,7 @@ def main():
 # ----- Set URL ----- #
         elif event == 'Set URL':
             try:
-                os.system('meshtastic --seturl '+values['-URLINPUT-'])
+                os.system('python -m meshtastic --seturl '+values['-URLINPUT-'])
             except Exception:
                 sg.popup('Error setting url')
                 os.system('echo ERROR Set URL error >>error.log')
@@ -343,7 +343,7 @@ def main():
 # ----- Set Long Slow ----- #
         elif event == 'Set Long Slow':
             try:
-                os.system('meshtastic --setch-longslow')
+                os.system('python -m meshtastic --setch-longslow')
             except Exception:
                 sg.popup('Error')
                 os.system('echo ERROR Set Channel LongSlow >>error.log')
@@ -352,7 +352,7 @@ def main():
 # ----- Set Short Fast ----- #
         elif event == 'Set Short Fast':
             try:
-                os.system('meshtastic --setch-shortfast')
+                os.system('python -m meshtastic --setch-shortfast')
             except Exception:
                 sg.popup('Error')
                 os.system('echo ERROR Set Channel ShortFast >>error.log')
@@ -361,7 +361,7 @@ def main():
 # ----- Set Owner ----- #
         elif event == 'Set Owner':
             try:
-                os.system('meshtastic --setowner '+values['-OWNERINPUT-'])
+                os.system('python -m meshtastic --setowner '+values['-OWNERINPUT-'])
             except Exception:
                 sg.popup('Error')
 # ----- /Set Owner ----- #
@@ -369,7 +369,7 @@ def main():
 # ----- Set Lattitude -----#
         elif event == 'Set Lattitude':
             try:
-                os.system('meshtastic --setlat '+values['-SETLAT-'])
+                os.system('python -m meshtastic --setlat '+values['-SETLAT-'])
             except Exception:
                 sg.popup('Error')
 # ----- /Set Lattitude ----- #
@@ -377,7 +377,7 @@ def main():
 # ----- Set Longitude ----- #
         elif event == 'Set Longitude':
             try:
-                os.system('meshtastic --setlon '+values['-SETLON-'])
+                os.system('python -m meshtastic --setlon '+values['-SETLON-'])
             except Exception:
                 sg.popup('Error')
 # ----- /Set Longitude ----- #
@@ -385,19 +385,19 @@ def main():
 # ----- Set Altitude ----- #
         elif event == 'Set Altitude':
             try:
-                os.system('meshtastic --setalt '+values['-SETALT-'])
+                os.system('python -m meshtastic --setalt '+values['-SETALT-'])
             except Exception:
                 sg.popup('Error')
 # -----/ Set Altitude ----- #
 
 # ----- Set Router ----- #
         elif event == 'Set Router':
-            os.system('meshtastic --set is_router true')
+            os.system('python -m meshtastic --set is_router true')
 # ----- /Set Router ----- #
 
 # ----- Unset Router ----- #
         elif event == 'Unset Router':
-            os.system('echo meshtastic --set is_router false')
+            os.system('python -m meshtastic --set is_router false')
 # ----- /Unset Router ----- #
 
 # ----- Download Firmware ----- #
@@ -439,10 +439,10 @@ def main():
         # ----- Flash Firmware ----- #
         elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
             try:
-                os.system('esptool.py --baud 921600 erase_flash')
-                os.system('esptool.py --baud 921600 write_flash 0x1000 '+values['_FILES3_'])
-                os.system('esptool.py --baud 921600 write_flash 0x00390000 '+values['_FILES2_'])
-                os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'])
+                os.system('python -m esptool --baud 921600 erase_flash')
+                os.system('python -m esptool --baud 921600 write_flash 0x1000 '+values['_FILES3_'])
+                os.system('python -m esptool --baud 921600 write_flash 0x00390000 '+values['_FILES2_'])
+                os.system('python -m esptool --baud 921600 write_flash 0x10000 '+values['_FILES_'])
             except Exception:
                 sg.popup('Flash Error')
                 os.system('echo ERROR Flash Firmware Event >>error.log')
@@ -454,7 +454,7 @@ def main():
                 # User browses for the file the y need and the file chose is used as input for the flashing script
                 # script must be present in the parent folder in order for flash function to work
                 # os.system('sh device-update.sh -f '+values['_FILES_'])
-                os.system('esptool.py --baud 921600 write_flash 0x10000 '+values['_FILES_'] )
+                os.system('python -m esptool --baud 921600 write_flash 0x10000 '+values['_FILES_'] )
             except Exception:
                 sg.popup('Firmware update error')
                 os.system('echo ERROR Firmware update Event >>error.log')
@@ -463,7 +463,7 @@ def main():
         # ----- Erase Firmware ----- #
         elif event == 'Erase Firmware':
             try:
-                os.system('esptool.py --baud 921600 erase_flash')
+                os.system('python -m esptool --baud 921600 erase_flash')
             except Exception:
                 sg.popup(' Erase Flash Error')
                 os.system('echo ERROR Erasing Flash Firmware Event >>error.log')
@@ -492,14 +492,14 @@ def main():
         # ----- Set Wifi ----- #
         elif event == 'Set Wifi SSID':
             try:
-                os.system('meshtastic  --set wifi_ssid '+values['-WifiSSID-'])
+                os.system('python -m meshtastic  --set wifi_ssid '+values['-WifiSSID-'])
             except Exception:
                 sg.popup('Wifi Setting Error')
                 os.system('echo ERROR setting SSID >>error.log')
 
         elif event == 'Set Wifi Password':
             try:
-                os.system('meshtastic  --set wifi_password '+values['-WifiPASS-'])
+                os.system('python -m meshtastic  --set wifi_password '+values['-WifiPASS-'])
             except Exception:
                 sg.popup('Wifi Password Error')
                 os.system('echo ERROR setting wifi password e Event >>error.log')
@@ -510,7 +510,7 @@ def main():
 
         elif event == 'AP On':
             try:
-                os.system('meshtastic --set wifi_ap_mode true')
+                os.system('python -m meshtastic --set wifi_ap_mode true')
             except Exception:
                 sg.popup('Error activating AP mode')
                 os.system('echo ERROR setting AP on Event >>error.log')
@@ -520,7 +520,7 @@ def main():
 
         elif event == 'AP Off':
             try:
-                os.system('meshtastic --set wifi_ap_mode false')
+                os.system('python -m meshtastic --set wifi_ap_mode false')
             except Exception:
                 sg.popup('Error trying to turn AP o ff ')
 
@@ -529,7 +529,7 @@ def main():
         # ----- Factory Reset ----- #
         elif event == 'Factory Reset':
             try:
-                os.system('meshtastic --set factory_reset true')
+                os.system('python -m meshtastic --set factory_reset true')
             except Exception:
                 sg.popup('Error Resetting Radio ')
 
@@ -542,14 +542,14 @@ def main():
             output_window = window3RADIO
             try:
                 if values['-OPTION-']:    # if something is highlighted in the list
-                    sg.popup(f" WARNING Command being sent: meshtastic --port {values['-SETPORT-']} --set {values['-OPTION-'][0]} {values['-SETVAL-']}",
+                    sg.popup(f" WARNING Command being sent: python -m meshtastic --set {values['-OPTION-'][0]} {values['-SETVAL-']}",
                     "WARNING Disconnect your radio now if you do not want this setting to be changed")
                     set_option_var = values['-OPTION-'][0]
                     set_option_val = values['-SETVAL-']
                     set_option_port = values['-SETPORT-']
-                    print('meshtastic --port '+set_option_port+' --set '+set_option_var+' '+set_option_val)
+                    print('python -m meshtastic --set '+set_option_var+' '+set_option_val)
                     try:
-                        os.system('meshtastic --port '+set_option_port+' --set '+set_option_var+' '+set_option_val)
+                        os.system('python -m meshtastic --set '+set_option_var+' '+set_option_val)
                     except Exception:
                         print('error connecting to radio')
             except Exception:
