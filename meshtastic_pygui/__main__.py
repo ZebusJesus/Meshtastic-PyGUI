@@ -201,7 +201,7 @@ def main():
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.7.2')
+            sg.popup('version 2.7.3')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
@@ -407,10 +407,10 @@ def main():
             binVersion = 'NULL'
             try:
                 # ----- Firmware Downlaod URL----- #
-                if values['-1.2.28-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/1.2.28/firmware-1.2.28.zip'
-                elif values['-1.2.38-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.38.cf4e508/firmware-1.2.38.cf4e508.zip'
+                if values['-1.2.47-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.47/firmware-1.2.47.zip'
+                elif values['-1.2.48-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.48.371335e/firmware-1.2.48.371335e.zip'
                 elif values['-1.2.42-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.42.2759c8d/firmware-1.2.42.2759c8d.zip'
                 elif values['-HN-']:
