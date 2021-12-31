@@ -12,6 +12,7 @@ import PySimpleGUI as sg
 import os
 import requests
 import meshtastic
+import meshtastic.serial_interface
 import subprocess
 import time
 from pubsub import pub
@@ -226,7 +227,7 @@ def main():
             #os.system("devcon.exe hwids * >>hwid.txt")
             try:
                 output_window = window3RADIO
-                interface = meshtastic.SerialInterface()
+                interface = meshtastic.serial_interface.SerialInterface()
                 interface.close()
                 print('closing connection to radio')
             except Exception:
@@ -251,13 +252,13 @@ def main():
         elif event == 'Connect to Radio':
             try:
                 output_window = window3RADIO
-                interface = meshtastic.SerialInterface()
+                interface = meshtastic.serial_interface.SerialInterface()
                 def onReceive(packet, interface): # called when a packet arrives
                     print(f'Received: {packet}')
 
                 def onConnection(interface, topic=pub.AUTO_TOPIC): # called when we (re)connect to the radio
                     # defaults to broadcast, specify a destination ID if you wish
-                    meshtastic.SerialInterface().sendText('hello mesh')
+                    meshtastic.serial_interface.SerialInterface().sendText('hello mesh')
 
                 print(pub.subscribe(onReceive, 'meshtastic.receive'))
                 print(pub.subscribe(onConnection, 'meshtastic.connection.established'))
@@ -278,7 +279,7 @@ def main():
         elif event == 'Send Message': #if user clicks send message take input and send to radio
 
             try:
-                interface = meshtastic.SerialInterface()
+                interface = meshtastic.serial_interface.SerialInterface()
                 interface.sendText(values['-MSGINPUT-'],
                  wantAck=values['-AKMSGTF-'],
                  wantResponse=values['-WNTRSPTF-'],
@@ -325,7 +326,7 @@ def main():
 # ------ Set Channel -----#
         elif event == 'Set Channel': #if user clicks Set Channel button
             try:
-                os.system('python -m meshtastic --setchan spread_factor '+values['-SFINPUT-']+' --setchan coding_rate '+values['-CRINPUT-']+' --setchan bandwidth '+values['-BWINPUT-'])
+                os.system('python -m meshtastic --ch-index 0 --ch-set spread_factor '+values['-SFINPUT-']+' --ch-set coding_rate '+values['-CRINPUT-']+' --ch-set bandwidth '+values['-BWINPUT-'])
             except Exception:
                 sg.popup('Error setting channel')
                 os.system('echo ERROR Set Channel Event >>error.log')
@@ -343,16 +344,18 @@ def main():
 # ----- Set Long Slow ----- #
         elif event == 'Set Long Slow':
             try:
-                os.system('python -m meshtastic --setch-longslow')
+                os.system('python -m meshtastic --ch-longslow')
             except Exception:
                 sg.popup('Error')
                 os.system('echo ERROR Set Channel LongSlow >>error.log')
 # ------ /Set Long Slow ----- #
 
+# TODO: add the other 4 ch options?
+
 # ----- Set Short Fast ----- #
         elif event == 'Set Short Fast':
             try:
-                os.system('python -m meshtastic --setch-shortfast')
+                os.system('python -m meshtastic --ch-shortfast')
             except Exception:
                 sg.popup('Error')
                 os.system('echo ERROR Set Channel ShortFast >>error.log')
@@ -414,6 +417,7 @@ def main():
                 elif values['-1.2.42-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.42.2759c8d/firmware-1.2.42.2759c8d.zip'
                 elif values['-HN-']:
+                    # TODO: no longer a nightly build
                     dateBuild = (time.strftime("%y-%m-%d"))
                     hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
                     binVersion = hamURL+'20'+dateBuild+'.zip'
