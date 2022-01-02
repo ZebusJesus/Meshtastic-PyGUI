@@ -1,7 +1,7 @@
 # ----- <About> ----- #
 #   Author: Zebus Zebus
 #   Email: zebusjesus@pm.me
-#   Date: 7-21-21
+#   Date: 12-01-22
 #   Meshtastic PyGUI
 #   Thank you to all the members of meshtastic that make this project possible
 #
@@ -27,7 +27,7 @@ menu_def = [['&File', ['&Properties', 'E&xit']],
             ['GPS', ['Range Test', ['Download Range Data', 'Normal', ], 'Future Function'], ],
             ['&Toolbar', ['---', 'Firmware Window', 'Radio Window',
                           '---', 'Options', 'Nodes']],
-            ['&Help', '&About...'], ]
+            ['&Help', '&...'], ]
 
 # ----- </Menu Definition> ----- #
 
@@ -202,7 +202,7 @@ def main():
 
 # ----- Menu About ----- #
         elif event == 'About...':
-            sg.popup('version 2.7.3')
+            sg.popup('version 2.7.5')
 # ----- /Menu About ----- #
 
 # ----- Open ----- #
