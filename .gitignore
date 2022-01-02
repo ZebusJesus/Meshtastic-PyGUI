@@ -1,4 +1,7 @@
 build
+*.pyc
+*.swp
 *egg-info
 radioinfo.txt
 dist
+venv/
