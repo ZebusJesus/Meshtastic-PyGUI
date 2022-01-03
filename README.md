@@ -2,11 +2,10 @@
 A python Based GUI that uses the Meshtastic API
 
 
-# Dependencies
+## Dependencies
 python 3.7 or above
-pip -- for install python Modules
-Meshtastic 1.2.6   "pip install --update Meshtastic"
-PySimpleGUI   "pip install PySimpleGUI"
+Meshtastic 
+PySimpleGUI 
 
 
 ```
