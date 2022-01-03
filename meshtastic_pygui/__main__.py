@@ -68,7 +68,7 @@ def make_win2FIRMWARE():  ##define Frimware Window loayout and conents
                [sg.Text('Hardware and  Firmware build selection')],
                [sg.Checkbox('T-Beam',key='-T-Beam-',enable_events=True),sg.Checkbox('heltec',key='-heltec-'),
                 sg.Checkbox('T-LoRa',key='-T-LoRa-'),sg.Checkbox('LoRa Relay',key='-LoRa Relay-')],
-               [sg.Checkbox('1.2.42',key='-1.2.42-'), sg.Checkbox('1.2.38',key='-1.2.38-'), sg.Checkbox('1.2.28',key='-1.2.28-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
+               [sg.Checkbox('1.2.42',key='-1.2.42-'), sg.Checkbox('1.2.49',key='-1.2.49-'), sg.Checkbox('1.2.50',key='-1.2.50-'), sg.Checkbox('Hamster Nightly',key='-HN-')],
                [sg.Button('Download Firmware')],
                [sg.Text('Firmware'),sg.Input(key='_FILES_'), sg.FilesBrowse()],
                [sg.Text('spiff'),sg.Input(key='_FILES2_'), sg.FilesBrowse()],
@@ -213,7 +213,7 @@ def main():
 # ----- Properties ----- #
         elif event == 'Properties':
             try:
-                output_window = window3RADIO
+                # -- to delete if not needed -----      output_window = window3RADIO
                 os.system('python -m meshtastic --info >radioinfo.txt')
                 f = open('radioinfo.txt', 'r')
                 file_contents = f.read()
@@ -226,7 +226,7 @@ def main():
 
             #os.system("devcon.exe hwids * >>hwid.txt")
             try:
-                output_window = window3RADIO
+                # -- to delete if not needed -----      output_window = window3RADIO
                 interface = meshtastic.serial_interface.SerialInterface()
                 interface.close()
                 print('closing connection to radio')
@@ -286,7 +286,7 @@ def main():
                  onResponse=None)
                 interface.close()
             except Exception:
-                output_window = window3RADIO
+                # -- to delete if not needed -----      output_window = window3RADIO
                 sg.popup('Error sending message')
 # ----- /Send Message ----- #
 
@@ -410,14 +410,13 @@ def main():
             binVersion = 'NULL'
             try:
                 # ----- Firmware Downlaod URL----- #
-                if values['-1.2.47-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.47/firmware-1.2.47.zip'
-                elif values['-1.2.48-']:
-                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.48.371335e/firmware-1.2.48.371335e.zip'
+                if values['-1.2.50-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.50.41dcfdd/firmware-1.2.50.41dcfdd.zip'
+                elif values['-1.2.49-']:
+                    binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.49.5354c49/firmware-1.2.49.5354c49.zip'
                 elif values['-1.2.42-']:
                     binVersion = 'https://github.com/meshtastic/Meshtastic-device/releases/download/v1.2.42.2759c8d/firmware-1.2.42.2759c8d.zip'
                 elif values['-HN-']:
-                    # TODO: no longer a nightly build
                     dateBuild = (time.strftime("%y-%m-%d"))
                     hamURL = 'http://www.casler.org/meshtastic/nightly_builds/meshtastic_device_nightly_'
                     binVersion = hamURL+'20'+dateBuild+'.zip'
@@ -439,7 +438,6 @@ def main():
                 sg.popup('error exctracting bin')
                 os.system('echo exrror extracting bin >>error.log')
                 #print('error extarcting bin')
-
         # ----- Flash Firmware ----- #
         elif event == 'Flash Firmware': # this command requires .sh files be able to be handled by the system, windows can us
             try:
@@ -543,7 +541,7 @@ def main():
             window4OPTIONS = make_win4OPTIONS()
 
         elif event == 'Send Config --CAREFUL NOW--':
-            output_window = window3RADIO
+            # -- to delete if not needed -----      output_window = window3RADIO
             try:
                 if values['-OPTION-']:    # if something is highlighted in the list
                     sg.popup(f" WARNING Command being sent: python -m meshtastic --set {values['-OPTION-'][0]} {values['-SETVAL-']}",
