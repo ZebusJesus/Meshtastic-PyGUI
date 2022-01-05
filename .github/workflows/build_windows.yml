@@ -22,5 +22,5 @@ jobs:
           pyinstaller -F -n meshtastic_pygui meshtastic_pygui/__main__.py
       - uses: actions/upload-artifact@v2
         with:
-          name: MeshFlash
+          name: meshtastic_pygui
           path: dist
