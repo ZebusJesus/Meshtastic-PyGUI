@@ -1,0 +1,4 @@
+meshtastic
+PySimpleGUI
+requests
+esptool
