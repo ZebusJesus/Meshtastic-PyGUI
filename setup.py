@@ -27,7 +27,7 @@ setup(
     ],
     packages=["meshtastic_pygui"],
     include_package_data=True,
-    install_requires=["meshtastic>=1.2.5", "PySimpleGUI>=4.34.0","requests>=2.25.1","esptool>=3.0"],
+    install_requires=["meshtastic>=1.2.52", "PySimpleGUI>=4.34.0","requests>=2.25.1","esptool>=3.0"],
     extras_require={},
     python_requires='>=3.6',
     entry_points={
